@@ -6,7 +6,7 @@ export class UserIdInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
     const userId = request.headers['x-user-id'];
-    request.userId = userId;
+    request.body.userId = userId;
 
     return next.handle();
   }
