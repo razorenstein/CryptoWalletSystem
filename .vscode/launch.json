@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Debug Wallet Service",
+        "skipFiles": ["<node_internals>/**"],
+        "program": "${workspaceFolder}/apps/wallet-service/src/main.ts",
+        "args": ["start"],
+        "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
+        "sourceMaps": true,
+        "env": {
+          "NODE_ENV": "development"
+        },
+        "outFiles": ["${workspaceFolder}/dist/apps/wallet-service/**/*.js"]
+      }
+    ]
+  }
+  
