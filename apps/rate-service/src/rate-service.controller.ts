@@ -1,12 +1,18 @@
-import { Controller, Get } from '@nestjs/common';
-import { RateServiceService } from './rate-service.service';
+import { Controller, Get, Query } from '@nestjs/common';
+import { RateService } from './rate-service.service';
+import { Rate } from '@shared/models';
 
-@Controller()
-export class RateServiceController {
-  constructor(private readonly rateServiceService: RateServiceService) {}
+@Controller('rates')
+export class RateController {
+  constructor(private readonly rateService: RateService) {}
 
   @Get()
-  getHello(): string {
-    return this.rateServiceService.getHello();
+  async getRates(
+    @Query('assetIds') assetIds: string,  
+    @Query('currency') currency: string   
+  ): Promise<Rate[]> {
+    const assetIdArray = assetIds.split(',');
+
+    return this.rateService.getRates(assetIdArray, currency);
   }
 }
