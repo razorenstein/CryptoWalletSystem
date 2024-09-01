@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as cache from 'memory-cache';
 import { Rate } from '@shared/models'; 
-import config from './config/config';
+import config from '../../../config/config';
 
 @Injectable()
 export class RateCacheService {

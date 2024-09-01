@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { RateService } from './rate-service.service';
-import { RateRefreshService } from './rate-refresh.service';
-import { RateCacheService } from './rate-cache.service';
-import { RateApiService } from './rate-api.service';
-import { RateController } from './rate-service.controller';
+import { RateService } from './services/rate-service.service';
+import { RateRefreshService } from './services/rate-refresh.service';
+import { RateCacheService } from './services/rate-cache.service';
+import { RateApiService } from './services/rate-api.service';
+import { RateController } from './controllers/rate-service.controller';
 import { ScheduleModule } from '@nestjs/schedule';
 import { HttpModule } from '@nestjs/axios';
 

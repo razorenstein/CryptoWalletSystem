@@ -3,7 +3,7 @@ import { Cron } from '@nestjs/schedule';
 import { RateCacheService } from './rate-cache.service';
 import { RateApiService } from './rate-api.service';
 import { Rate } from '@shared/models';
-import config from './config/config';
+import config from '../../../config/config';
 
 
 @Injectable()
