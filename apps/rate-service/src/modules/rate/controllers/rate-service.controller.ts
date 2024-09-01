@@ -12,8 +12,8 @@ export class RateController {
     @Query('currency') currency: string   
   ): Promise<RateResponseDto> {
     const assetIdArray = assetIds.split(',');
-
     const rates: Rate[] = await this.rateService.getRates(assetIdArray, currency);
+    
     return { rates };
   }
 }
