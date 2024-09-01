@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { RateService } from '../services/rate-service.service';
-import { Rate } from '@shared/models';
+import { Rate, RateResponseDto } from '@shared/models';
 
 @Controller('rates')
 export class RateController {
@@ -10,9 +10,10 @@ export class RateController {
   async getRates(
     @Query('assetIds') assetIds: string,  
     @Query('currency') currency: string   
-  ): Promise<Rate[]> {
+  ): Promise<RateResponseDto> {
     const assetIdArray = assetIds.split(',');
 
-    return this.rateService.getRates(assetIdArray, currency);
+    const rates: Rate[] = await this.rateService.getRates(assetIdArray, currency);
+    return { rates };
   }
 }
