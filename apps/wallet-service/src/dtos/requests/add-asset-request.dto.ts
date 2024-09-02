@@ -6,6 +6,6 @@ export class AddAssetDto {
   readonly assetId: string;
 
   @IsNumber()
-  @Min(0.01)
-  readonly quantity: number;
+  @Min(Number.MIN_VALUE, { message: `The value must be greater than or equal to ${Number.MIN_VALUE}` })
+  readonly amount: number;
 }

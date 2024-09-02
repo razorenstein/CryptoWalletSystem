@@ -1,6 +1,6 @@
 export default {
     cache: {
-      ttl: 2 * 60 * 1000, //2 minutes
+      ttl: 1 * 60 * 1000, //1 minute
       maxItems: 50, 
     },
     cron: {

@@ -1,18 +1,25 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { Rate } from '@shared/models'; 
+import { ApiCallFailedException } from '@shared/exceptions'; 
 import { AxiosResponse } from 'axios';
 import { firstValueFrom } from 'rxjs';
+import { WalletSystemLogger } from '@shared/logging';
 
 @Injectable()
 export class RateApiService {
   private readonly apiBaseUrl = 'https://api.coingecko.com/api/v3'; 
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly logger: WalletSystemLogger, 
+  ) {}
 
   async fetchRates(assetIds: string[], currencies: string[]): Promise<Rate[]> {
     const ids = assetIds.join(',');
     const vsCurrencies = currencies.join(',');
+
+    this.logger.log(`Fetching rates`, RateApiService.name, { assetIds, currencies });
 
     let response: AxiosResponse;
 
@@ -25,8 +32,12 @@ export class RateApiService {
         },
       }));
     } catch (error) {
-      throw new HttpException('Failed to fetch rates from the API', HttpStatus.BAD_GATEWAY);
+      const url = `${this.apiBaseUrl}/simple/price?ids=${ids}&vs_currencies=${vsCurrencies}`;
+      this.logger.error(`Failed to fetch rates from rates provider`, error.stack, RateApiService.name, { assetIds, currencies, url });
+      throw new ApiCallFailedException('RateService', url, error.message);
     }
+
+    this.logger.log(`Successfully fetched rates`, RateApiService.name, { assetIds, currencies });
 
     return this.parseRates(response.data, assetIds, currencies);
   }
@@ -50,6 +61,8 @@ export class RateApiService {
         }
       }
     }
+
+    this.logger.log(`Parsed rates successfully`, RateApiService.name, { assetIds, currencies, ratesCount: rates.length });
 
     return rates;
   }

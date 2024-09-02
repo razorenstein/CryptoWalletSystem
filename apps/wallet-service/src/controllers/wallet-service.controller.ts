@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Put, Delete, Param, Headers, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Query, Delete, Param, Headers, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { WalletService } from '../wallet-service.service';
 import { CreateWalletDto } from '../dtos/requests/create-wallet-request.dto';
 import { Wallet } from '@shared/models';
+import { WalletValueResponseDto } from '../dtos/requests/wallet-total-value-response.dto';
 
 @Controller('wallets')
 export class WalletServiceController {
@@ -31,5 +32,20 @@ export class WalletServiceController {
     @Param('id') walletId: string
   ): Promise<void> {
     return this.walletService.deleteWallet(userId, walletId);
+  }
+
+  @Get(':walletId/value')
+  async getTotalWalletValue(
+    @Headers('X-User-ID') userId: string,
+    @Param('walletId') walletId: string,
+    @Query('currency') currency: string
+  ): Promise<WalletValueResponseDto> {
+    const { wallet, totalValue } = await this.walletService.calculateTotalValue(userId, walletId, currency);
+
+    return {
+      wallet,
+      totalValue,
+      currency,
+    };
   }
 }

@@ -32,9 +32,16 @@ export class RateRefreshService {
     const assetIdsArray = Array.from(assetIds);
     const currenciesArray = Array.from(currencies);
 
-    const rates: Rate[] = await this.rateApiService.fetchRates(assetIdsArray, currenciesArray);
+    const fetchedRates: Rate[] = await this.rateApiService.fetchRates(assetIdsArray, currenciesArray);
 
-    rates.forEach((rate) => {
+    // Filter fetched rates to include only those that match the cached pairs
+    const filteredRates = fetchedRates.filter(fetchedRate =>
+      cachedRates.some(cachedRate =>
+        cachedRate.assetId === fetchedRate.assetId && cachedRate.currency === fetchedRate.currency
+      )
+    );
+    
+    filteredRates.forEach((rate) => {
       this.rateCacheService.setRate(rate);
     });
   }

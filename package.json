@@ -17,7 +17,10 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./apps/crypto-wallet-system-oobit/test/jest-e2e.json"
+    "test:e2e": "jest --config ./apps/crypto-wallet-system-oobit/test/jest-e2e.json",
+    "start:all": "concurrently \"npm run start:dev:wallet-service\" \"npm run start:dev:rate-service\"",
+    "start:dev:wallet-service": "nest start wallet-service --watch",
+    "start:dev:rate-service": "nest start rate-service --watch"
   },
   "dependencies": {
     "@nestjs/axios": "^3.0.3",
