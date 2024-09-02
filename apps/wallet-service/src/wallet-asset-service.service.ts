@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { WalletFileManagementService } from '@shared/file-management';
 import { AddAssetDto } from './dtos/requests/add-asset-request.dto';
 import { RemoveAssetDto } from './dtos/requests/remove-asset-request.dto';
-import { WalletNotFoundException } from '@shared/exceptions';
+import { AssetNotFoundException, WalletNotFoundException } from '@shared/exceptions';
 import { WalletSystemLogger } from '@shared/logging';
 import { Wallet, CryptoAsset } from '@shared/models';
 
@@ -51,7 +51,7 @@ export class WalletAssetService {
         const assetIndex = wallet.cryptoAssets.findIndex((asset) => asset.symbol === removeAssetDto.assetId);
         if (assetIndex === -1) {
             this.logger.warn(`Asset not found in wallet`, WalletAssetService.name, { userId, walletId, assetId: removeAssetDto.assetId });
-            throw new Error(`Asset with ID ${removeAssetDto.assetId} not found in wallet`);
+            throw new AssetNotFoundException(removeAssetDto.assetId, walletId);
         }
 
         wallet.cryptoAssets.splice(assetIndex, 1); // Remove the asset from the wallet

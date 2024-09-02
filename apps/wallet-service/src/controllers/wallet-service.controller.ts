@@ -2,7 +2,7 @@ import { Controller, Get, Post, Query, Delete, Param, Headers, Body, HttpCode, H
 import { WalletService } from '../wallet-service.service';
 import { CreateWalletDto } from '../dtos/requests/create-wallet-request.dto';
 import { Wallet } from '@shared/models';
-import { WalletValueResponseDto } from '../dtos/requests/wallet-total-value-response.dto';
+import { WalletTotalValue } from '../models/wallet-total-value.model';
 
 @Controller('wallets')
 export class WalletServiceController {
@@ -39,13 +39,7 @@ export class WalletServiceController {
     @Headers('X-User-ID') userId: string,
     @Param('walletId') walletId: string,
     @Query('currency') currency: string
-  ): Promise<WalletValueResponseDto> {
-    const { wallet, totalValue } = await this.walletService.calculateTotalValue(userId, walletId, currency);
-
-    return {
-      wallet,
-      totalValue,
-      currency,
-    };
+  ): Promise<WalletTotalValue> {
+    return await this.walletService.calculateTotalValue(userId, walletId, currency);
   }
 }

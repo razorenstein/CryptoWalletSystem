@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Wallet } from '@shared/models';
 import { WalletAlreadyExistsException, WalletNotFoundException, UnauthorizedWalletAccessException } from '@shared/exceptions';
 import { WalletAssetService } from './wallet-asset-service.service';
+import { WalletTotalValue } from './models/wallet-total-value.model';
 import { RateService } from './rate-service-api.service';
 import { WalletSystemLogger } from '@shared/logging';
 import { WalletFileManagementService, UserWalletsFileManagementService } from '@shared/file-management';
@@ -16,7 +17,7 @@ export class WalletService {
   ) {}
 
   private async verifyUserWallet(userId: string, walletId: string): Promise<void> {
-    const userWallets = await this.userWalletsFileManagementService.getUserWallets(userId);
+    const userWallets = await this.userWalletsFileManagementService.getUserWalletIds(userId);
     if (!userWallets || !userWallets.includes(walletId)) {
       this.logger.warn(`Unauthorized access attempt`, WalletService.name, { userId, walletId });
       throw new UnauthorizedWalletAccessException(walletId, userId);
@@ -68,13 +69,17 @@ export class WalletService {
     this.logger.log(`Wallet deleted successfully`, WalletService.name, { userId, walletId });
   }
 
-  async calculateTotalValue(userId: string, walletId: string, currency: string): Promise<{ wallet: Wallet; totalValue: number }> {
+  async calculateTotalValue(userId: string, walletId: string, currency: string): Promise<WalletTotalValue> {
     this.logger.log(`Calculating total value`, WalletService.name, { userId, walletId, currency });
 
+    // Verify that the wallet belongs to the user
     await this.verifyUserWallet(userId, walletId);
+
+    // Retrieve the wallet
     const wallet = await this.getWallet(userId, walletId);
     const assetIds = wallet.cryptoAssets.map(asset => asset.symbol);
 
+    // Get the rates for the specified currency
     const ratesResponse = await this.rateService.getAssetRates(assetIds, currency);
 
     // Create a map of assetId to rate value for quick lookup
@@ -90,6 +95,11 @@ export class WalletService {
     }, 0);
 
     this.logger.log(`Total value calculated`, WalletService.name, { userId, walletId, currency, totalValue });
-    return { wallet, totalValue };
+
+    return {
+      wallet,
+      totalValue,
+      currency,
+    };
   }
 }

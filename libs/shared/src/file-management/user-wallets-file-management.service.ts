@@ -28,7 +28,7 @@ export class UserWalletsFileManagementService {
     this.logger.log(`Saved wallets for user`, UserWalletsFileManagementService.name, { userId, walletIds });
   }
 
-  async getUserWallets(userId: string): Promise<string[] | null> {
+  async getUserWalletIds(userId: string): Promise<string[] | null> {
     const filePath = this.getUserFilePath(userId);
     if (fs.existsSync(filePath)) {
       const walletIdsData = fs.readFileSync(filePath, { encoding: 'utf8' });
@@ -40,7 +40,7 @@ export class UserWalletsFileManagementService {
   }
 
   async addUserWallet(userId: string, walletId: string): Promise<void> {
-    const walletIds = await this.getUserWallets(userId) || [];
+    const walletIds = await this.getUserWalletIds(userId) || [];
     if (!walletIds.includes(walletId)) {
       walletIds.push(walletId);
       await this.saveUserWallets(userId, walletIds);
@@ -49,7 +49,7 @@ export class UserWalletsFileManagementService {
   }
 
   async removeUserWallet(userId: string, walletId: string): Promise<void> {
-    const walletIds = await this.getUserWallets(userId);
+    const walletIds = await this.getUserWalletIds(userId);
     if (walletIds) {
       const updatedWalletIds = walletIds.filter(id => id !== walletId);
       await this.saveUserWallets(userId, updatedWalletIds);
