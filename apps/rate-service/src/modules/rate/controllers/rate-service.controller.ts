@@ -1,6 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { RateService } from '../services/rate-service.service';
-import { Rate, RateResponseDto } from '@shared/models';
+import { Rate } from '@shared/models';
+import { RateResponseDto } from '@shared/dto';
 
 @Controller('rates')
 export class RateController {

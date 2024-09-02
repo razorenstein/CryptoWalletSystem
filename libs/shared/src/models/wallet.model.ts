@@ -1,7 +1,8 @@
 import { CryptoAsset } from "./asset.model";
 
 export interface Wallet {
-    walletId: string;
+    id: string;
     userId: string;
     cryptoAssets: CryptoAsset[];
+    lastUpdated: Date;
   }

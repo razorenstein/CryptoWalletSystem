@@ -1,17 +1,19 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { WalletServiceController } from './controllers/wallet-service.controller';
-import { WalletService } from './services/wallet-service.service';
-import { UserIdInterceptor } from './interceptors/user-id.interceptor';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { FileManagementModule } from '@shared/file-management/FileManagementModule';
+import { WalletService } from './wallet-service.service';
+import { LoggingModule } from '@shared/logging';
+import { FileManagementModule } from '@shared/file-management';
+import { UserIdValidationMiddleware } from './middlewares/user-id-validation.middleware';
 
 @Module({
-  imports: [FileManagementModule],
   controllers: [WalletServiceController],
-  providers: [WalletService,
-    {
-    provide: APP_INTERCEPTOR,
-    useClass: UserIdInterceptor,
-  },]
+  imports: [LoggingModule, FileManagementModule],
+  providers: [WalletService]
 })
-export class WalletServiceModule {}
+export class WalletServiceModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(UserIdValidationMiddleware)
+      .forRoutes('*');  
+  }
+}

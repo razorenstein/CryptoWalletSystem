@@ -1,9 +1,26 @@
+// {
+//   "extends": "../../tsconfig.json",
+//   "compilerOptions": {
+//     "declaration": true,
+//     "outDir": "../../dist/libs/shared"
+//   },
+//   "include": ["src/**/*"],
+//   "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
+// }
+
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "outDir": "../../dist/out-tsc", // Adjust this path as necessary
+    "target": "es2017",
+    "module": "commonjs",
     "declaration": true,
-    "outDir": "../../dist/libs/shared"
+    "declarationMap": true,
+    "sourceMap": true,
+    "inlineSources": true,
+    "types": ["node"],
+    "lib": ["es2017", "dom"]
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
+  "exclude": ["**/*.spec.ts"],
+  "include": ["**/*.ts"]
 }
