@@ -45,7 +45,7 @@
   </li>
   <li>
     <strong>Navigate to the project directory:</strong>
-    <pre><code>cd crypto-wallet-system</code></pre>
+    <pre><code>cd crypto-wallet-system-oobit</code></pre>
   </li>
   <li>
     <strong>Install Dependencies:</strong>
