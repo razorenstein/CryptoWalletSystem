@@ -77,7 +77,7 @@ export class WalletService {
 
     // Retrieve the wallet
     const wallet = await this.getWallet(userId, walletId);
-    const assetIds = wallet.cryptoAssets.map(asset => asset.symbol);
+    const assetIds = wallet.cryptoAssets.map(asset => asset.id);
 
     // Get the rates for the specified currency
     const ratesResponse = await this.rateService.getAssetRates(assetIds, currency);
@@ -90,7 +90,7 @@ export class WalletService {
 
     // Calculate the total value of the wallet in the specified currency
     const totalValue = wallet.cryptoAssets.reduce((sum, asset) => {
-      const rate = ratesMap[asset.symbol];
+      const rate = ratesMap[asset.id];
       return sum + (asset.amount * rate);
     }, 0);
 

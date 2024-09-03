@@ -1,5 +1,5 @@
 export interface CryptoAsset {
-    symbol: string;
+    id: string;
     amount: number;
   }
   

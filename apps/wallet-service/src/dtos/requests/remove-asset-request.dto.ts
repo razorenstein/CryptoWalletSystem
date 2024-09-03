@@ -1,8 +1,10 @@
+import { IsAssetIdSupported } from '@shared/utils';
 import { IsString, IsNotEmpty, IsNumber, Min } from 'class-validator';
 
 export class RemoveAssetDto {
   @IsString()
   @IsNotEmpty()
+  @IsAssetIdSupported()
   readonly assetId: string;
 
   @IsNumber()

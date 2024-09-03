@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { WalletFileManagementService } from '@shared/file-management';
 import { AddAssetDto } from './dtos/requests/add-asset-request.dto';
 import { RemoveAssetDto } from './dtos/requests/remove-asset-request.dto';
-import { AssetNotFoundException, WalletNotFoundException } from '@shared/exceptions';
+import { AssetNotFoundException, WalletNotFoundException, InsufficientAssetAmountException } from '@shared/exceptions';
 import { WalletSystemLogger } from '@shared/logging';
 import { Wallet, CryptoAsset } from '@shared/models';
 
@@ -21,7 +21,7 @@ export class WalletAssetService {
             throw new WalletNotFoundException(walletId, userId);
         }
 
-        const assetIndex = wallet.cryptoAssets.findIndex((asset) => asset.symbol === addAssetDto.assetId);
+        const assetIndex = wallet.cryptoAssets.findIndex((asset) => asset.id === addAssetDto.assetId);
         if (assetIndex !== -1) {
             // Asset exists, update its value
             wallet.cryptoAssets[assetIndex].amount += addAssetDto.amount;
@@ -29,11 +29,11 @@ export class WalletAssetService {
         } else {
             // Add new asset to the wallet
             const newAsset: CryptoAsset = {
-            symbol: addAssetDto.assetId,
+            id: addAssetDto.assetId,
             amount: addAssetDto.amount,
             };
             wallet.cryptoAssets.push(newAsset);
-            this.logger.log(`Added new asset to wallet`, WalletAssetService.name, { userId, walletId, assetId: newAsset.symbol, value: newAsset.amount });
+            this.logger.log(`Added new asset to wallet`, WalletAssetService.name, { userId, walletId, assetId: newAsset.id, value: newAsset.amount });
         }
 
         await this.walletFileManagementService.saveWallet(wallet);
@@ -42,22 +42,24 @@ export class WalletAssetService {
 
     async removeAsset(userId: string, walletId: string, removeAssetDto: RemoveAssetDto): Promise<Wallet> {
         const wallet = await this.walletFileManagementService.getWallet(walletId);
-
-        if (!wallet) {
-            this.logger.warn(`Wallet not found for removing asset`, WalletAssetService.name, { userId, walletId });
+        if (!wallet) 
             throw new WalletNotFoundException(walletId, userId);
-        }
-
-        const assetIndex = wallet.cryptoAssets.findIndex((asset) => asset.symbol === removeAssetDto.assetId);
-        if (assetIndex === -1) {
-            this.logger.warn(`Asset not found in wallet`, WalletAssetService.name, { userId, walletId, assetId: removeAssetDto.assetId });
+      
+        const asset = wallet.cryptoAssets.find(asset => asset.id === removeAssetDto.assetId);
+        if (!asset) 
             throw new AssetNotFoundException(removeAssetDto.assetId, walletId);
+      
+        if (asset.amount < removeAssetDto.amount) {
+          throw new InsufficientAssetAmountException(removeAssetDto.assetId, asset.amount, removeAssetDto.amount);
         }
-
-        wallet.cryptoAssets.splice(assetIndex, 1); // Remove the asset from the wallet
-        this.logger.log(`Removed asset from wallet`, WalletAssetService.name, { userId, walletId, assetId: removeAssetDto.assetId });
-
+      
+        asset.amount -= removeAssetDto.amount;
+        if (asset.amount === 0)
+          wallet.cryptoAssets = wallet.cryptoAssets.filter(a => a.id !== removeAssetDto.assetId); // Remove asset if amount reaches 0
+      
         await this.walletFileManagementService.saveWallet(wallet);
+        this.logger.log(`Asset ${removeAssetDto.assetId} updated in wallet ${walletId} for user ${userId}`, WalletAssetService.name);
+      
         return wallet;
     }
 }

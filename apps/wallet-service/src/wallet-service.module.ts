@@ -10,11 +10,14 @@ import { UserIdValidationMiddleware } from './middlewares/user-id-validation.mid
 import { HttpModule } from '@nestjs/axios';
 import { UserAssetsController } from './controllers/user-assets.controller';
 import { UserAssetsService } from './user-assets.service';
+import { SupportedValuesService } from './supported-values.service';
+import { SupportedValuesController } from './controllers/supported-values.controller';
+import { IsAssetIdSupportedConstraint } from '@shared/utils/validation/asset-id-validator.decorator';
 
 @Module({
-  controllers: [WalletServiceController, WalletAssetServiceController, UserAssetsController],
+  controllers: [WalletServiceController, WalletAssetServiceController, UserAssetsController, SupportedValuesController],
   imports: [HttpModule, LoggingModule, FileManagementModule],
-  providers: [WalletService, WalletAssetService, UserAssetsService, RateService]
+  providers: [WalletService, WalletAssetService, UserAssetsService, RateService, SupportedValuesService, IsAssetIdSupportedConstraint]
 })
 export class WalletServiceModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

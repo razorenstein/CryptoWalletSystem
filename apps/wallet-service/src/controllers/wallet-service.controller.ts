@@ -3,6 +3,8 @@ import { WalletService } from '../wallet-service.service';
 import { CreateWalletDto } from '../dtos/requests/create-wallet-request.dto';
 import { Wallet } from '@shared/models';
 import { WalletTotalValue } from '../models/wallet-total-value.model';
+import { validateCurrency } from '@shared/utils';
+import { UnsupportedCurrencyException } from '@shared/exceptions';
 
 @Controller('wallets')
 export class WalletServiceController {
@@ -40,6 +42,8 @@ export class WalletServiceController {
     @Param('walletId') walletId: string,
     @Query('currency') currency: string
   ): Promise<WalletTotalValue> {
+    validateCurrency(currency);
+    
     return await this.walletService.calculateTotalValue(userId, walletId, currency);
   }
 }

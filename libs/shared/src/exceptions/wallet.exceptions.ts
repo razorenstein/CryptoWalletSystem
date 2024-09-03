@@ -17,3 +17,9 @@ export class UnauthorizedWalletAccessException extends HttpException {
       super(`User ${userId} is not authorized to access wallet ${walletId}`, HttpStatus.FORBIDDEN);
     }
 }
+
+export class UnsupportedCurrencyException extends HttpException {
+  constructor(currency: string) {
+    super(`Currency "${currency}" is not supported.`, HttpStatus.BAD_REQUEST);
+  }
+}
