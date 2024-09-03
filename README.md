@@ -41,7 +41,11 @@
 <ol>
   <li>
     <strong>Clone the Repository:</strong>
-    <pre><code>git clone https://github.com/razorenstein/CryptoWalletSystem.git<br/>cd crypto-wallet-system-oobit</code></pre>
+    <pre><code>git clone https://github.com/razorenstein/CryptoWalletSystem.git</code></pre>
+  </li>
+  <li>
+    <strong>Navigate to the project directory:</strong>
+    <pre><code>cd crypto-wallet-system</code></pre>
   </li>
   <li>
     <strong>Install Dependencies:</strong>
@@ -80,7 +84,7 @@
 <h3>Request Validation</h3>
 <p>
   Users are required to include the <code>X-USER-ID</code> header in their requests. A dedicated middleware validates this header, ensuring that only 
-  valid and authorized requests are processed. Also validity of other params is checked like currency, assetid etc.
+  valid and authorized requests are processed. If the header is missing or invalid, the request is rejected, and an appropriate exception is thrown.
 </p>
 
 <hr/>
@@ -103,3 +107,24 @@
   <li><strong>InsufficientAssetAmountException</strong>: Thrown when a user attempts to remove more of an asset than they hold in their wallet.</li>
   <li><strong>ApiCallFailedException</strong>: Thrown when a call to an external API fails.</li>
 </ul>
+
+<hr/>
+
+<h2>Approach Explanation</h2>
+<p>
+  The development approach for the Crypto Wallet System was methodical and deliberate, starting with a clear understanding of the required behaviors and functionalities.
+  Initially, I focused on <strong>modeling all the behaviors</strong> that the system needed to support. This involved creating detailed <strong>models of the objects</strong>
+  that represent the core entities of the application, such as wallets, assets, and rates.
+</p>
+<p>
+  With the object models in place, the next step was to design the <strong>APIs</strong> that would expose these functionalities. I carefully considered how to structure
+  the APIs to be intuitive and efficient, ensuring that they align well with RESTful principles. Throughout this process, I emphasized <strong>separation of concerns</strong> by clearly delineating the responsibilities of each microservice, ensuring that each service is focused on a specific domain.
+</p>
+<p>
+  Another key focus was on <strong>shared functionality</strong>. I identified common patterns and utilities that could be reused across the microservices and implemented
+  them in a shared library. This approach not only promotes code reuse but also ensures that the application remains modular and easy to maintain.
+</p>
+<p>
+  Finally, I prioritized <strong>good project organization</strong>. The monorepo structure, combined with a well-organized shared library, facilitates collaboration and 
+  scalability, while also making the project easier to navigate for developers.
+</p>
