@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Wallet } from '@shared/models';
 import { WalletAlreadyExistsException, WalletNotFoundException, UnauthorizedWalletAccessException } from '@shared/exceptions';
 import { WalletAssetService } from './wallet-asset-service.service';
-import { WalletTotalValue } from './models/wallet-total-value.model';
+import { WalletTotalValue } from '../models/wallet-total-value.model';
 import { RateService } from './rate-service-api.service';
 import { WalletSystemLogger } from '@shared/logging';
 import { WalletFileManagementService, UserWalletsFileManagementService } from '@shared/file-management';

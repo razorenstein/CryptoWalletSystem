@@ -1,8 +1,8 @@
 import { Controller, Post, Delete, Param, Headers, Body, HttpCode, HttpStatus } from '@nestjs/common';
-import { WalletAssetService } from '../wallet-asset-service.service';
 import { AddAssetDto } from '../dtos/requests/add-asset-request.dto';
 import { RemoveAssetDto } from '../dtos/requests/remove-asset-request.dto';
 import { Wallet } from '@shared/models';
+import { WalletAssetService } from '../services/wallet-asset-service.service';
 
 @Controller('assets')
 export class WalletAssetServiceController {

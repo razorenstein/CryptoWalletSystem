@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { WalletService } from './wallet-service.service';
-import { WalletTotalValue } from './models/wallet-total-value.model';
-import { UserAssetsTotalValue } from './models/user-wallets-total-value.model';
+import { WalletTotalValue } from '../models/wallet-total-value.model';
+import { UserAssetsTotalValue } from '../models/user-wallets-total-value.model';
 import { UserWalletsFileManagementService } from '@shared/file-management';
 
 @Injectable()

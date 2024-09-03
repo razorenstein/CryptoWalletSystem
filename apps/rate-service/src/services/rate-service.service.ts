@@ -10,15 +10,6 @@ export class RateService {
     private readonly rateApiService: RateApiService,
   ) {}
 
-  /**
-   * Retrieves exchange rates for the specified asset IDs and a single currency.
-   *
-   * Checks the cache first. If a rate is missing, fetches it from the API and caches it.
-   *
-   * @param {string[]} assetIds - Asset IDs to fetch rates for.
-   * @param {string} currency - Currency code to fetch rates in.
-   * @returns {Promise<Rate[]>} - A promise resolving to an array of `Rate` objects.
-   */
   async getRates(assetIds: string[], currency: string): Promise<Rate[]> {
     const missingRates: string[] = [];
     const rates: Rate[] = [];

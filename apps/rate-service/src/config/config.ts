@@ -6,5 +6,8 @@ export default {
     cron: {
       rateRefreshInterval: '0 */1 * * * *', // Cron expression for running every 1 minutes
     },
+    api: {
+      coinGeckoBaseUrl: 'https://api.coingecko.com/'
+    }
   };
   

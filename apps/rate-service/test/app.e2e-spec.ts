@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { RateModule } from '../src/modules/rate/rate-service.module';
+import { RateModule } from '../src/rate-service.module';
 
 describe('RateServiceController (e2e)', () => {
   let app: INestApplication;

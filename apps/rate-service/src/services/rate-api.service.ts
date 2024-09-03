@@ -5,10 +5,10 @@ import { ApiCallFailedException } from '@shared/exceptions';
 import { AxiosResponse } from 'axios';
 import { firstValueFrom } from 'rxjs';
 import { WalletSystemLogger } from '@shared/logging';
+import config from '../config/config';
 
 @Injectable()
 export class RateApiService {
-  private readonly apiBaseUrl = 'https://api.coingecko.com/api/v3'; 
 
   constructor(
     private readonly httpService: HttpService,
@@ -22,9 +22,10 @@ export class RateApiService {
     this.logger.log(`Fetching rates`, RateApiService.name, { assetIds, currencies });
 
     let response: AxiosResponse;
-
+    const url = `${config.api.coinGeckoBaseUrl}/simple/price`;
+    
     try {
-      response = await firstValueFrom(this.httpService.get(`${this.apiBaseUrl}/simple/price`, {
+      response = await firstValueFrom(this.httpService.get(url, {
         params: {
           ids: ids,
           vs_currencies: vsCurrencies,
@@ -32,7 +33,6 @@ export class RateApiService {
         },
       }));
     } catch (error) {
-      const url = `${this.apiBaseUrl}/simple/price?ids=${ids}&vs_currencies=${vsCurrencies}`;
       this.logger.error(`Failed to fetch rates from rates provider`, error.stack, RateApiService.name, { assetIds, currencies, url });
       throw new ApiCallFailedException('RateService', url, error.message);
     }

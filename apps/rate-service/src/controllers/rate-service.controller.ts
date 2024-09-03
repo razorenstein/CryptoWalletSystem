@@ -1,8 +1,8 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { RateService } from '../services/rate-service.service';
 import { Rate } from '@shared/models';
-import { RateResponseDto } from '@shared/dto';
 import { validateCurrency } from '@shared/utils';
+import { RateResponseDto } from '@shared/dtos';
 
 @Controller('rates')
 export class RateController {

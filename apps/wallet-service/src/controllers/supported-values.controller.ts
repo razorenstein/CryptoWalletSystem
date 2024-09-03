@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { SupportedValuesService } from '../supported-values.service';
+import { SupportedValuesService } from '../services/supported-values.service';
 
 @Controller('supported-values')
 export class SupportedValuesController {

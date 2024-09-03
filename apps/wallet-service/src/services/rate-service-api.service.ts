@@ -3,7 +3,8 @@ import { lastValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import { WalletSystemLogger } from '@shared/logging';
 import { ApiCallFailedException } from '@shared/exceptions';
-import { RateResponseDto } from '@shared/dto';
+import { RateResponseDto } from '@shared/dtos';
+import config from '../config/config';
 
 @Injectable()
 export class RateService {
@@ -13,7 +14,7 @@ export class RateService {
   ) {}
 
   async getAssetRates(assetIds: string[], currency: string): Promise<RateResponseDto> {
-    const url = `http://localhost:3000/rates?assetIds=${assetIds.join(',')}&currency=${currency}`;
+    const url = `${config.api.ratesApiBaseUrl}/rates?assetIds=${assetIds.join(',')}&currency=${currency}`;
     
     try {
       const response = await lastValueFrom(this.httpService.get<RateResponseDto>(url));
