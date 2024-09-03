@@ -14,7 +14,7 @@ export class RateService {
   ) {}
 
   async getAssetRates(assetIds: string[], currency: string): Promise<RateResponseDto> {
-    const url = `${config.api.ratesApiBaseUrl}/rates?assetIds=${assetIds.join(',')}&currency=${currency}`;
+    const url = `${config.api.ratesApiBaseUrl}api/v1/rates?assetIds=${assetIds.join(',')}&currency=${currency}`;
     
     try {
       const response = await lastValueFrom(this.httpService.get<RateResponseDto>(url));

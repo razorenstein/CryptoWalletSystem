@@ -1,4 +1,4 @@
-import { Controller, Post, Delete, Param, Headers, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Delete, Param, Headers, Body, HttpCode, HttpStatus, Version } from '@nestjs/common';
 import { AddAssetDto } from '../dtos/requests/add-asset-request.dto';
 import { RemoveAssetDto } from '../dtos/requests/remove-asset-request.dto';
 import { Wallet } from '@shared/models';
@@ -9,6 +9,7 @@ export class WalletAssetServiceController {
   constructor(private readonly assetService: WalletAssetService) {}
 
   @Post(':walletId')
+  @Version('1')
   @HttpCode(HttpStatus.OK)
   async addAsset(
     @Headers('X-User-ID') userId: string,
@@ -19,6 +20,7 @@ export class WalletAssetServiceController {
   }
 
   @Delete(':walletId')
+  @Version('1')
   @HttpCode(HttpStatus.OK)
   async removeAsset(
     @Headers('X-User-ID') userId: string,

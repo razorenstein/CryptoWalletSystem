@@ -22,7 +22,7 @@ export class RateApiService {
     this.logger.log(`Fetching rates`, RateApiService.name, { assetIds, currencies });
 
     let response: AxiosResponse;
-    const url = `${config.api.coinGeckoBaseUrl}/simple/price`;
+    const url = `${config.api.coinGeckoBaseUrl}api/v3/simple/price`;
     
     try {
       response = await firstValueFrom(this.httpService.get(url, {
