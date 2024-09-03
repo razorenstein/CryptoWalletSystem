@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as cache from 'memory-cache';
 import { Rate } from '@shared/models'; 
 import config from '../config/config';
+import { generateRatesCacheKey } from '../utils/cache-keys.util';
 
 @Injectable()
 export class RateCacheService {
@@ -9,7 +10,7 @@ export class RateCacheService {
     private maxCacheSize = config.cache.maxItems;
 
   getRate(assetId: string, currency: string): Rate | null {
-    const cacheKey = this.getCacheKey(assetId, currency);
+    const cacheKey = generateRatesCacheKey(assetId, currency);
     const cachedRate = cache.get(cacheKey);
     return cachedRate ? (cachedRate as Rate) : null;
   }
@@ -18,7 +19,7 @@ export class RateCacheService {
     if (cache.size() >= this.maxCacheSize) {
       this.evictOldestItem();
     }
-    const cacheKey = this.getCacheKey(rate.assetId, rate.currency);
+    const cacheKey = generateRatesCacheKey(rate.assetId, rate.currency);
     cache.put(cacheKey, rate, this.cacheDuration);
   }
 
@@ -26,10 +27,6 @@ export class RateCacheService {
       const keys = cache.keys();
       return keys.map((key) => cache.get(key) as Rate);
     }
-    
-  private getCacheKey(assetId: string, currency: string): string {
-    return `${assetId.toLowerCase()}-${currency.toLowerCase()}`;
-  }
 
   private evictOldestItem(): void {
     const keys = cache.keys();
