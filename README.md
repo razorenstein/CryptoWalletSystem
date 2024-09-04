@@ -3,6 +3,7 @@
 <hr/>
 
 <h2>Project Overview</h2>
+
 <p>
   The <strong>Crypto Wallet System</strong> is a robust backend application built using NestJS, 
   designed to empower users in managing their cryptocurrency holdings. This system offers features to view current valuations, 
@@ -15,6 +16,10 @@
   <li>
     <strong>Wallet Service</strong>: This service handles user wallets, offering full CRUD operations on wallets and assets. 
     It calculates the total value of a wallet or aggregate value across multiple wallets by fetching asset rates data from the Rate Service.
+    
+    User can create a wallet (default amount of posible wallets per users is 1 but it's configurable in config file).
+    After User creates a wallet he can Add assets, remove assets, rebalance them, get their wallet actual amounts in a specific currency and more.
+    Notice that a supported Asset Ids and currencies list are available also as endpoints.
   </li>
   <li>
     <strong>Rate Service</strong>: This service integrates seamlessly with the external CoinGecko API to fetch current cryptocurrency rates. 
