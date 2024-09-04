@@ -1,7 +1,7 @@
 import { Controller, Get, Version } from '@nestjs/common';
 import { SupportedValuesService } from '../services/supported-values.service';
 
-@Controller('api/supported-values')
+@Controller('supported-values')
 export class SupportedValuesController {
   constructor(private readonly supportedValuesService: SupportedValuesService) {}
 

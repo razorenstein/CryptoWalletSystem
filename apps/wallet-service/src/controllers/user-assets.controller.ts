@@ -1,7 +1,8 @@
-import { Controller, Get, Headers, Query, Version } from '@nestjs/common';
+import { Body, Controller, Get, Headers, HttpCode, HttpStatus, Param, Post, Query, Version } from '@nestjs/common';
 import { UserAssetsTotalValue } from '../models/user-wallets-total-value.model';
 import { validateCurrency } from '@shared/utils';
 import { UserAssetsService } from '../services/user-assets.service';
+import { RebalanceWalletDto } from '../dtos/requests/rebalance-wallet-dto';
 
 @Controller('user-assets')
 export class UserAssetsController {
@@ -16,5 +17,17 @@ export class UserAssetsController {
     validateCurrency(currency);
     
     return this.userAssetsService.calculateTotalUserAssetsValue(userId, currency);
+  }
+
+  @Post(':walletId/rebalance')
+  @Version('1')
+  @HttpCode(HttpStatus.OK)
+  async rebalanceWallet(
+    @Headers('X-User-ID') userId: string,
+    @Param('walletId') walletId: string,
+    @Body() rebalanceWalletDto: RebalanceWalletDto
+  ): Promise<void> {
+
+    await this.userAssetsService.rebalance(userId, walletId, rebalanceWalletDto.targetPercentages);
   }
 }

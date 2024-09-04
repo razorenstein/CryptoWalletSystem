@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "9a2b1065-86e7-4041-91f9-cc3cb520e1c0",
+		"_postman_id": "b00e7c44-1f5d-4e84-895b-9350ff1ce062",
 		"name": "CryptoWalletSystem API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "38037948"
@@ -33,13 +33,15 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:3001/wallets",
+									"raw": "http://localhost:3001/api/v1/wallets",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "3001",
 									"path": [
+										"api",
+										"v1",
 										"wallets"
 									]
 								}
@@ -58,13 +60,15 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:3001/wallets/wallet123",
+									"raw": "http://localhost:3001/api/v1/wallets/wallet123",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "3001",
 									"path": [
+										"api",
+										"v1",
 										"wallets",
 										"wallet123"
 									]
@@ -84,13 +88,15 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:3001/wallets/wallet123",
+									"raw": "http://localhost:3001/api/v1/wallets/wallet123",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "3001",
 									"path": [
+										"api",
+										"v1",
 										"wallets",
 										"wallet123"
 									]
@@ -110,13 +116,15 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:3001/wallets/wallet123/value?currency=USD",
+									"raw": "http://localhost:3001/api/v1/wallets/wallet123/value?currency=USD",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "3001",
 									"path": [
+										"api",
+										"v1",
 										"wallets",
 										"wallet123",
 										"value"
@@ -144,12 +152,14 @@
 									}
 								],
 								"url": {
-									"raw": "localhost:3001/user-assets/total-value?currency=USD",
+									"raw": "localhost:3001/api/v1/user-assets/total-value?currency=USD",
 									"host": [
 										"localhost"
 									],
 									"port": "3001",
 									"path": [
+										"api",
+										"v1",
 										"user-assets",
 										"total-value"
 									],
@@ -159,6 +169,49 @@
 											"value": "USD",
 											"description": "The currency in which to calculate the total value"
 										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Rebalance Wallet",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-USER-ID",
+										"value": "user123",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"targetPercentages\": {\n    \"bitcoin\": 50,\n    \"ethereum\": 50\n    // \"oobit\": 20\n  }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/v1/user-assets/wallet123/rebalance",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"v1",
+										"user-assets",
+										"wallet123",
+										"rebalance"
 									]
 								}
 							},
@@ -182,7 +235,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"assetId\": \"oobit\",\n    \"amount\": 1.5\n}",
+									"raw": "{\n    \"assetId\": \"oobit\",\n    \"amount\": 1\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -227,13 +280,15 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:3001/assets/wallet123",
+									"raw": "http://localhost:3001/api/v1/assets/wallet123",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "3001",
 									"path": [
+										"api",
+										"v1",
 										"assets",
 										"wallet123"
 									]
@@ -250,15 +305,23 @@
 							"name": "Get Supported Currencies",
 							"request": {
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "X-User-ID",
+										"value": "user123",
+										"type": "text"
+									}
+								],
 								"url": {
-									"raw": "http://localhost:3000/supported-values/currencies",
+									"raw": "http://localhost:3001/api/v1/supported-values/currencies",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "3000",
+									"port": "3001",
 									"path": [
+										"api",
+										"v1",
 										"supported-values",
 										"currencies"
 									]
@@ -270,15 +333,23 @@
 							"name": "Get Supported Asset IDs",
 							"request": {
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "X-User-ID",
+										"value": "user123",
+										"type": "text"
+									}
+								],
 								"url": {
-									"raw": "http://localhost:3001/supported-values/asset-ids",
+									"raw": "http://localhost:3001/api/v1/supported-values/asset-ids",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "3001",
 									"path": [
+										"api",
+										"v1",
 										"supported-values",
 										"asset-ids"
 									]

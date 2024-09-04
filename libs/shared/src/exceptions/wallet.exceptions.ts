@@ -23,3 +23,9 @@ export class UnsupportedCurrencyException extends HttpException {
     super(`Currency "${currency}" is not supported.`, HttpStatus.BAD_REQUEST);
   }
 }
+
+export class MaxWalletsExceededException extends HttpException {
+  constructor(userId: string, maxWallets: number) {
+    super(`User ${userId} has exceeded the maximum allowed number of wallets: ${maxWallets}`, HttpStatus.BAD_REQUEST);
+  }
+}
