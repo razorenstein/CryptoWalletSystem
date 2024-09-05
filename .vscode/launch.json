@@ -1,0 +1,41 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Wallet Service",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/apps/wallet-service/src/main.ts",
+      "args": ["start"],
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
+      "sourceMaps": true,
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "envFile": "${workspaceFolder}/apps/wallet-service/.env",  // Add this line to load env variables from file
+      "outFiles": ["${workspaceFolder}/dist/apps/wallet-service/**/*.js"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Rate Service",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/apps/rate-service/src/main.ts",
+      "args": ["start"],
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
+      "sourceMaps": true,
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "envFile": "${workspaceFolder}/apps/rate-service/.env",  // Add this line to load env variables from file
+      "outFiles": ["${workspaceFolder}/dist/apps/rate-service/**/*.js"]
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug Both Services",
+      "configurations": ["Debug Wallet Service", "Debug Rate Service"]
+    }
+  ]
+}
