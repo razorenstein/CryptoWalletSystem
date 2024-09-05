@@ -50,7 +50,7 @@
   </li>
   <li>
     <strong>Navigate to the project directory:</strong>
-    <pre><code>cd crypto-wallet-system-oobit</code></pre>
+    <pre><code>cd CryptoWalletSystem</code></pre>
   </li>
   <li>
     <strong>Install Dependencies:</strong>
