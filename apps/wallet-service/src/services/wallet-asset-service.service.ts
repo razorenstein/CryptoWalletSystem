@@ -55,7 +55,7 @@ export class WalletAssetService {
       
         asset.amount -= removeAssetDto.amount;
         if (asset.amount === 0)
-          wallet.cryptoAssets = wallet.cryptoAssets.filter(a => a.id !== removeAssetDto.assetId); // Remove asset if amount reaches 0
+          wallet.cryptoAssets = wallet.cryptoAssets.filter(a => a.id !== removeAssetDto.assetId); 
       
         await this.walletFileManagementService.saveWallet(wallet);
         this.logger.log(`Asset ${removeAssetDto.assetId} updated in wallet ${walletId} for user ${userId}`, WalletAssetService.name);
