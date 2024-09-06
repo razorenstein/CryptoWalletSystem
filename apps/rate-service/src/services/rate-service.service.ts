@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { RateCacheService } from './rate-cache.service';
 import { RateApiService } from './rate-api.service';
-import { Rate } from '@shared/models'; 
+import { Rate } from '@shared/models';
 
 @Injectable()
 export class RateService {
@@ -27,7 +27,9 @@ export class RateService {
 
     // If there are missing rates, fetch them from the API
     if (missingRates.length > 0) {
-      const fetchedRates = await this.rateApiService.fetchRates(missingRates, [currency]);
+      const fetchedRates = await this.rateApiService.fetchRates(missingRates, [
+        currency,
+      ]);
 
       // Cache the fetched rates and add them to the result list
       for (const rate of fetchedRates) {

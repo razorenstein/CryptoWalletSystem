@@ -3,7 +3,9 @@ import { SupportedValuesService } from '../services/supported-values.service';
 
 @Controller('supported-values')
 export class SupportedValuesController {
-  constructor(private readonly supportedValuesService: SupportedValuesService) {}
+  constructor(
+    private readonly supportedValuesService: SupportedValuesService,
+  ) {}
 
   @Get('currencies')
   @Version('1')

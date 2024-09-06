@@ -1,8 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { Rate } from '@shared/models';
 import { RateApiService } from '../../src/services/rate-api.service';
 import { RateCacheService } from '../../src/services/rate-cache.service';
-import { RateService } from '../../src/services/rate-service.service';
 import { mockCachedRates, mockFetchedRates } from '../mocks/mock-rates';
 import { createTestModule } from '../test-setup';
 
@@ -32,9 +29,13 @@ describe('RateService', () => {
     const currency = 'USD';
 
     // Simulate rates being available in cache
-    (rateCacheService.getRate as jest.Mock).mockImplementation((assetId, currency) => {
-      return mockCachedRates.find(rate => rate.assetId === assetId && rate.currency === currency);
-    });
+    (rateCacheService.getRate as jest.Mock).mockImplementation(
+      (assetId, currency) => {
+        return mockCachedRates.find(
+          (rate) => rate.assetId === assetId && rate.currency === currency,
+        );
+      },
+    );
 
     const rates = await rateService.getRates(assetIds, currency);
 
@@ -49,16 +50,20 @@ describe('RateService', () => {
 
     // Simulate cache miss for all assetIds
     (rateCacheService.getRate as jest.Mock).mockReturnValue(null);
-    (rateApiService.fetchRates as jest.Mock).mockResolvedValue(mockFetchedRates);
+    (rateApiService.fetchRates as jest.Mock).mockResolvedValue(
+      mockFetchedRates,
+    );
 
     const rates = await rateService.getRates(assetIds, currency);
 
     expect(rateCacheService.getRate).toHaveBeenCalledTimes(assetIds.length);
-    expect(rateApiService.fetchRates).toHaveBeenCalledWith(assetIds, [currency]); // Ensure we fetch the rates from API
+    expect(rateApiService.fetchRates).toHaveBeenCalledWith(assetIds, [
+      currency,
+    ]); // Ensure we fetch the rates from API
     expect(rates).toEqual(mockFetchedRates);
 
     // Ensure that fetched rates are set into the cache
-    mockFetchedRates.forEach(rate => {
+    mockFetchedRates.forEach((rate) => {
       expect(rateCacheService.setRate).toHaveBeenCalledWith(rate);
     });
   });
@@ -66,26 +71,30 @@ describe('RateService', () => {
   it('should return a mix of cached and fetched rates', async () => {
     const assetIds = ['bitcoin', 'ethereum'];
     const currency = 'USD';
-  
+
     // Mock the cache to return the cached rates for both assets
-    rateCacheService.getRate.mockImplementation((assetId: string, currency: string) => {
-      return mockCachedRates.find(rate => rate.assetId === assetId && rate.currency === currency);
-    });
-  
+    rateCacheService.getRate.mockImplementation(
+      (assetId: string, currency: string) => {
+        return mockCachedRates.find(
+          (rate) => rate.assetId === assetId && rate.currency === currency,
+        );
+      },
+    );
+
     // Mock the API to return fetched rates (but this should not be called since all are cached)
     rateApiService.fetchRates.mockResolvedValue(mockFetchedRates);
-  
+
     const rates = await rateService.getRates(assetIds, currency);
-  
+
     // Check that getRate was called twice (once per asset)
     expect(rateCacheService.getRate).toHaveBeenCalledTimes(assetIds.length);
-  
+
     // Ensure fetchRates was not called because all rates are cached
     expect(rateApiService.fetchRates).not.toHaveBeenCalled();
-  
+
     // Verify that the returned rates are the cached rates
     expect(rates).toEqual([
-      ...mockCachedRates // Return the cached rates only
+      ...mockCachedRates, // Return the cached rates only
     ]);
   });
 });

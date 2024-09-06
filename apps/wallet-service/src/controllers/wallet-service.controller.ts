@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Query, Delete, Param, Headers, Body, HttpCode, HttpStatus, Version } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Query,
+  Delete,
+  Param,
+  Headers,
+  Body,
+  HttpCode,
+  HttpStatus,
+  Version,
+} from '@nestjs/common';
 import { Wallet } from '@shared/models';
 import { validateCurrency } from '@shared/utils';
 import { WalletService } from '../services/wallet-service.service';
@@ -21,8 +33,8 @@ export class WalletServiceController {
   @Get(':id')
   @Version('1')
   async getWallet(
-    @Headers('X-User-ID') userId: string, 
-    @Param('id') walletId: string
+    @Headers('X-User-ID') userId: string,
+    @Param('id') walletId: string,
   ): Promise<Wallet> {
     return this.walletService.getWallet(userId, walletId);
   }
@@ -31,8 +43,8 @@ export class WalletServiceController {
   @Version('1')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteWallet(
-    @Headers('X-User-ID') userId: string, 
-    @Param('id') walletId: string
+    @Headers('X-User-ID') userId: string,
+    @Param('id') walletId: string,
   ): Promise<void> {
     return this.walletService.deleteWallet(userId, walletId);
   }
@@ -42,30 +54,34 @@ export class WalletServiceController {
   async getTotalWalletValue(
     @Headers('X-User-ID') userId: string,
     @Param('walletId') walletId: string,
-    @Query('currency') currency: string
+    @Query('currency') currency: string,
   ): Promise<WalletTotalValue> {
     validateCurrency(currency);
-    return await this.walletService.calculateTotalValue(userId, walletId, currency);
+    return await this.walletService.calculateTotalValue(
+      userId,
+      walletId,
+      currency,
+    );
   }
 
-  @Post('assets/:walletId')  
+  @Post('assets/:walletId')
   @Version('1')
   @HttpCode(HttpStatus.OK)
   async addAsset(
     @Headers('X-User-ID') userId: string,
     @Param('walletId') walletId: string,
-    @Body() addAssetDto: AddAssetDto
+    @Body() addAssetDto: AddAssetDto,
   ): Promise<Wallet> {
     return this.walletService.addAsset(userId, walletId, addAssetDto);
   }
 
-  @Delete('assets/:walletId') 
+  @Delete('assets/:walletId')
   @Version('1')
   @HttpCode(HttpStatus.OK)
   async removeAsset(
     @Headers('X-User-ID') userId: string,
     @Param('walletId') walletId: string,
-    @Body() removeAssetDto: RemoveAssetDto
+    @Body() removeAssetDto: RemoveAssetDto,
   ): Promise<Wallet> {
     return this.walletService.removeAsset(userId, walletId, removeAssetDto);
   }
@@ -76,9 +92,12 @@ export class WalletServiceController {
   async rebalanceWallet(
     @Headers('X-User-ID') userId: string,
     @Param('walletId') walletId: string,
-    @Body() rebalanceWalletDto: RebalanceWalletDto
+    @Body() rebalanceWalletDto: RebalanceWalletDto,
   ): Promise<void> {
-
-    await this.walletService.rebalance(userId, walletId, rebalanceWalletDto.targetPercentages);
+    await this.walletService.rebalance(
+      userId,
+      walletId,
+      rebalanceWalletDto.targetPercentages,
+    );
   }
 }

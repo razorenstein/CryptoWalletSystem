@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { InvalidUserIdException } from '@shared/exceptions'; 
+import { InvalidUserIdException } from '@shared/exceptions';
 
 @Injectable()
 export class UserIdValidationMiddleware implements NestMiddleware {

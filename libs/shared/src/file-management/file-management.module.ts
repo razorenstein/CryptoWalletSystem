@@ -5,13 +5,10 @@ import { WalletSystemLogger } from '../logging';
 
 @Module({
   providers: [
-    WalletSystemLogger, 
-    UserWalletsFileManagementService, 
+    WalletSystemLogger,
+    UserWalletsFileManagementService,
     WalletFileManagementService,
   ],
-  exports: [
-    UserWalletsFileManagementService, 
-    WalletFileManagementService,
-  ],
+  exports: [UserWalletsFileManagementService, WalletFileManagementService],
 })
 export class FileManagementModule {}

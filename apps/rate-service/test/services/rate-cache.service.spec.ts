@@ -38,7 +38,9 @@ describe('RateCacheService', () => {
 
       const rate = service.getRate('bitcoin', 'USD');
       expect(rate).toBeNull();
-      expect(cache.get).toHaveBeenCalledWith(generateRatesCacheKey('bitcoin', 'USD'));
+      expect(cache.get).toHaveBeenCalledWith(
+        generateRatesCacheKey('bitcoin', 'USD'),
+      );
     });
 
     it('should return the rate if it is in cache', () => {
@@ -46,7 +48,9 @@ describe('RateCacheService', () => {
 
       const rate = service.getRate('bitcoin', 'USD');
       expect(rate).toEqual(mockRates[0]);
-      expect(cache.get).toHaveBeenCalledWith(generateRatesCacheKey('bitcoin', 'USD'));
+      expect(cache.get).toHaveBeenCalledWith(
+        generateRatesCacheKey('bitcoin', 'USD'),
+      );
     });
   });
 
@@ -55,13 +59,13 @@ describe('RateCacheService', () => {
       const mockRate = mockRates[0];
 
       (cache.size as jest.Mock).mockReturnValue(0);
-      
+
       service.setRate(mockRate);
 
       expect(cache.put).toHaveBeenCalledWith(
         generateRatesCacheKey('bitcoin', 'USD'),
         mockRate,
-        config.cache.ttl // Correct usage of config.cache.ttl
+        config.cache.ttl, // Correct usage of config.cache.ttl
       );
     });
 
@@ -77,24 +81,31 @@ describe('RateCacheService', () => {
       expect(cache.put).toHaveBeenCalledWith(
         generateRatesCacheKey('bitcoin', 'USD'),
         mockRate,
-        config.cache.ttl
+        config.cache.ttl,
       );
     });
   });
 
   describe('getAllRates', () => {
     it('should return all rates in the cache', () => {
-      (cache.keys as jest.Mock).mockReturnValue(['bitcoin-usd', 'ethereum-usd']);
+      (cache.keys as jest.Mock).mockReturnValue([
+        'bitcoin-usd',
+        'ethereum-usd',
+      ]);
       (cache.get as jest.Mock).mockImplementation((key: string) => {
-        return mockRates.find(rate => rate.assetId === key.split('-')[0]);
+        return mockRates.find((rate) => rate.assetId === key.split('-')[0]);
       });
 
       const rates = service.getAllRates();
 
       expect(rates).toEqual(mockRates);
       expect(cache.keys).toHaveBeenCalled();
-      expect(cache.get).toHaveBeenCalledWith(generateRatesCacheKey('bitcoin', 'USD'));
-      expect(cache.get).toHaveBeenCalledWith(generateRatesCacheKey('ethereum', 'USD'));
+      expect(cache.get).toHaveBeenCalledWith(
+        generateRatesCacheKey('bitcoin', 'USD'),
+      );
+      expect(cache.get).toHaveBeenCalledWith(
+        generateRatesCacheKey('ethereum', 'USD'),
+      );
     });
   });
 });

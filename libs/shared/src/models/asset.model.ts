@@ -1,5 +1,4 @@
 export interface CryptoAsset {
-    id: string;
-    amount: number;
-  }
-  
+  id: string;
+  amount: number;
+}

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, Validate } from 'class-validator';
+import { IsNotEmpty, Validate } from 'class-validator';
 import { IsAssetIdSupported } from '@shared/utils';
 
 export class RebalanceWalletDto {

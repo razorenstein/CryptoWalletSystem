@@ -11,10 +11,13 @@ export class UserAssetsController {
   @Version('1')
   async getTotalUserAssetsValue(
     @Headers('X-User-ID') userId: string,
-    @Query('currency') currency: string
+    @Query('currency') currency: string,
   ): Promise<UserAssetsTotalValue> {
     validateCurrency(currency);
-    
-    return this.userAssetsService.calculateTotalUserAssetsValue(userId, currency);
+
+    return this.userAssetsService.calculateTotalUserAssetsValue(
+      userId,
+      currency,
+    );
   }
 }

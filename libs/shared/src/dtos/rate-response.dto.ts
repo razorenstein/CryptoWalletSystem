@@ -1,5 +1,5 @@
-import { Rate } from "../models";
+import { Rate } from '../models';
 
 export class RateResponseDto {
-    rates: Rate[];
-  }
+  rates: Rate[];
+}

@@ -7,10 +7,10 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
   app.enableVersioning({
-    type: VersioningType.URI, 
-  });  
+    type: VersioningType.URI,
+  });
 
-  app.useGlobalPipes(new ValidationPipe()); 
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(3001);
 }
 bootstrap();

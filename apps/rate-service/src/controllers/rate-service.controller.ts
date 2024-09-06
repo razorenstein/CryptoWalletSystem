@@ -11,13 +11,16 @@ export class RateController {
   @Get()
   @Version('1')
   async getRates(
-    @Query('assetIds') assetIds: string,  
-    @Query('currency') currency: string   
+    @Query('assetIds') assetIds: string,
+    @Query('currency') currency: string,
   ): Promise<RateResponseDto> {
     validateCurrency(currency);
     const assetIdArray = assetIds.split(',');
-    const rates: Rate[] = await this.rateService.getRates(assetIdArray, currency);
-    
+    const rates: Rate[] = await this.rateService.getRates(
+      assetIdArray,
+      currency,
+    );
+
     return { rates };
   }
 }

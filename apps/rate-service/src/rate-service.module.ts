@@ -9,17 +9,13 @@ import { LoggingModule } from '@shared/logging';
 import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [
-    HttpModule, 
-    LoggingModule,
-    ScheduleModule.forRoot(), 
-  ],
+  imports: [HttpModule, LoggingModule, ScheduleModule.forRoot()],
   providers: [
-    RateService,          
-    RateRefreshService,   
-    RateCacheService,   
-    RateApiService,       
+    RateService,
+    RateRefreshService,
+    RateCacheService,
+    RateApiService,
   ],
-  controllers: [RateController], 
+  controllers: [RateController],
 })
 export class RateModule {}

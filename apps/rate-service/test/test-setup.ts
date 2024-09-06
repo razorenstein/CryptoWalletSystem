@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RateCacheService } from '../src/services/rate-cache.service';
 import { RateApiService } from '../src/services/rate-api.service';
 import { RateRefreshService } from '../src/services/rate-refresh.service';
-import config from '../src/config/config';
 import { RateService } from '../src/services/rate-service.service';
 
 export async function createTestModule() {
@@ -23,7 +22,7 @@ export async function createTestModule() {
         },
       },
       RateService,
-      RateRefreshService, 
+      RateRefreshService,
     ],
   }).compile();
 

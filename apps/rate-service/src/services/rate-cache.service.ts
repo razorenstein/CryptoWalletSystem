@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import * as cache from 'memory-cache';
-import { Rate } from '@shared/models'; 
+import { Rate } from '@shared/models';
 import config from '../config/config';
 import { generateRatesCacheKey } from '../utils/cache-keys.util';
 
 @Injectable()
 export class RateCacheService {
-    private cacheDuration = config.cache.ttl;
-    private maxCacheSize = config.cache.maxItems;
+  private cacheDuration = config.cache.ttl;
+  private maxCacheSize = config.cache.maxItems;
 
   getRate(assetId: string, currency: string): Rate | null {
     const cacheKey = generateRatesCacheKey(assetId, currency);
@@ -24,9 +24,9 @@ export class RateCacheService {
   }
 
   getAllRates(): Rate[] {
-      const keys = cache.keys();
-      return keys.map((key) => cache.get(key) as Rate);
-    }
+    const keys = cache.keys();
+    return keys.map((key) => cache.get(key) as Rate);
+  }
 
   private evictOldestItem(): void {
     const keys = cache.keys();

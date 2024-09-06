@@ -2,14 +2,20 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 
 export class WalletNotFoundException extends HttpException {
   constructor(walletId: string, userId: string) {
-    super(`Wallet with ID ${walletId} not found for user ${userId}`, HttpStatus.NOT_FOUND);
+    super(
+      `Wallet with ID ${walletId} not found for user ${userId}`,
+      HttpStatus.NOT_FOUND,
+    );
   }
 }
 
 export class UnauthorizedWalletAccessException extends HttpException {
-    constructor(walletId: string, userId: string) {
-      super(`User ${userId} is not authorized to access wallet ${walletId}`, HttpStatus.FORBIDDEN);
-    }
+  constructor(walletId: string, userId: string) {
+    super(
+      `User ${userId} is not authorized to access wallet ${walletId}`,
+      HttpStatus.FORBIDDEN,
+    );
+  }
 }
 
 export class UnsupportedCurrencyException extends HttpException {
@@ -20,6 +26,9 @@ export class UnsupportedCurrencyException extends HttpException {
 
 export class MaxWalletsExceededException extends HttpException {
   constructor(userId: string, maxWallets: number) {
-    super(`User ${userId} has exceeded the maximum allowed number of wallets: ${maxWallets}`, HttpStatus.BAD_REQUEST);
+    super(
+      `User ${userId} has exceeded the maximum allowed number of wallets: ${maxWallets}`,
+      HttpStatus.BAD_REQUEST,
+    );
   }
 }
