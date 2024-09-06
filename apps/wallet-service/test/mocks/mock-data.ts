@@ -1,7 +1,7 @@
 import { Wallet } from '@shared/models';
 
 export const mockWallet = {
-  id: 'wallet1',
+  id: 'wallet1', // Static ID for existing wallet tests
   userId: 'user1',
   cryptoAssets: [
     { id: 'bitcoin', amount: 2 }, // Current amount of bitcoin
@@ -11,7 +11,7 @@ export const mockWallet = {
 };
 
 export const emptyWallet: Wallet = {
-  id: 'wallet2',
+  id: 'generated-uuid', // This simulates the generated UUID
   userId: 'user2',
   cryptoAssets: [],
   lastUpdated: new Date(),

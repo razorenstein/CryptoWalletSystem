@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { WalletFileManagementService } from '@shared/file-management';
-import { AddAssetDto } from '../dtos/requests/add-asset-request.dto';
-import { RemoveAssetDto } from '../dtos/requests/remove-asset-request.dto';
+import { AddAssetDto } from '../dtos/add-asset-request.dto';
+import { RemoveAssetDto } from '../dtos/remove-asset-request.dto';
 import { AssetNotFoundException, WalletNotFoundException, InsufficientAssetAmountException } from '@shared/exceptions';
 import { WalletSystemLogger } from '@shared/logging';
 import { Wallet, CryptoAsset } from '@shared/models';

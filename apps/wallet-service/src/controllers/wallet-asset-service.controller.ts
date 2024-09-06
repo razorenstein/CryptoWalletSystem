@@ -1,6 +1,6 @@
 import { Controller, Post, Delete, Param, Headers, Body, HttpCode, HttpStatus, Version } from '@nestjs/common';
-import { AddAssetDto } from '../dtos/requests/add-asset-request.dto';
-import { RemoveAssetDto } from '../dtos/requests/remove-asset-request.dto';
+import { AddAssetDto } from '../dtos/add-asset-request.dto';
+import { RemoveAssetDto } from '../dtos/remove-asset-request.dto';
 import { Wallet } from '@shared/models';
 import { WalletAssetService } from '../services/wallet-asset-service.service';
 

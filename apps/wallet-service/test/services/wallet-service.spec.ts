@@ -1,8 +1,13 @@
-import { WalletAlreadyExistsException, WalletNotFoundException, UnauthorizedWalletAccessException, MaxWalletsExceededException } from '@shared/exceptions';
+import { WalletNotFoundException, UnauthorizedWalletAccessException, MaxWalletsExceededException } from '@shared/exceptions';
 import { mockRatesResponse, mockWallet } from '../mocks/mock-data';
 import { createTestModule } from '../test-setup';
 import config from '../../src/config/config';
-  
+import { v4 as uuidv4 } from 'uuid';
+
+jest.mock('uuid', () => ({
+  v4: jest.fn(),
+}));
+
 describe('WalletService', () => {
     let walletService;
     let walletFileManagementService;
@@ -21,45 +26,40 @@ describe('WalletService', () => {
         config.wallet.maxWalletsPerUser = 1; 
     });
 
-  describe('createWallet', () => {
-    it('should create a new wallet if the user does not exceed the limit', async () => {
-        userWalletsFileManagementService.getUserWalletIds = jest.fn().mockResolvedValue([]); // No wallets yet
-        walletFileManagementService.getWallet = jest.fn().mockResolvedValue(null); // Wallet doesn't exist
-        walletFileManagementService.saveWallet = jest.fn().mockResolvedValue(undefined);
-        userWalletsFileManagementService.addUserWallet = jest.fn().mockResolvedValue(undefined);
+    describe('createWallet', () => {
+      it('should create a new wallet with a generated UUID if the user does not exceed the limit', async () => {
+          userWalletsFileManagementService.getUserWalletIds = jest.fn().mockResolvedValue([]); // No wallets yet
+          walletFileManagementService.getWallet = jest.fn().mockResolvedValue(null); // Wallet doesn't exist
+          walletFileManagementService.saveWallet = jest.fn().mockResolvedValue(undefined);
+          userWalletsFileManagementService.addUserWallet = jest.fn().mockResolvedValue(undefined);
+          
+          const mockUUID = 'generated-uuid';
+          uuidv4.mockReturnValue(mockUUID);  // Mock UUID generation
 
-        const result = await walletService.createWallet('user1', 'wallet2');
+          const result = await walletService.createWallet('user1');
 
-        expect(walletFileManagementService.saveWallet).toHaveBeenCalledWith({
-        id: 'wallet2',
-        userId: 'user1',
-        cryptoAssets: [],
-        lastUpdated: expect.any(Date),
-        });
+          expect(walletFileManagementService.saveWallet).toHaveBeenCalledWith({
+              id: mockUUID, 
+              userId: 'user1',
+              cryptoAssets: [],
+              lastUpdated: expect.any(Date),
+          });
 
-        expect(userWalletsFileManagementService.addUserWallet).toHaveBeenCalledWith('user1', 'wallet2');
-        expect(result).toEqual({
-        id: 'wallet2',
-        userId: 'user1',
-        cryptoAssets: [],
-        lastUpdated: expect.any(Date),
-        });
-    });
-  
-    it('should throw MaxWalletsExceededException if user exceeds the max wallets', async () => {
-      userWalletsFileManagementService.getUserWalletIds = jest.fn().mockResolvedValue(['wallet1']); // Already 1 wallet
-  
-      await expect(walletService.createWallet('user1', 'wallet3')).rejects.toThrow(MaxWalletsExceededException);
-      expect(walletFileManagementService.saveWallet).not.toHaveBeenCalled();
-    });
-  
-    it('should throw WalletAlreadyExistsException if wallet already exists', async () => {
-      userWalletsFileManagementService.getUserWalletIds = jest.fn().mockResolvedValue([]); // No wallets yet
-      walletFileManagementService.getWallet = jest.fn().mockResolvedValue(mockWallet); // Wallet exists
-  
-      await expect(walletService.createWallet('user1', 'wallet1')).rejects.toThrow(WalletAlreadyExistsException);
-      expect(walletFileManagementService.saveWallet).not.toHaveBeenCalled();
-    });
+          expect(userWalletsFileManagementService.addUserWallet).toHaveBeenCalledWith('user1', mockUUID);
+          expect(result).toEqual({
+              id: mockUUID,
+              userId: 'user1',
+              cryptoAssets: [],
+              lastUpdated: expect.any(Date),
+          });
+      });
+
+      it('should throw MaxWalletsExceededException if user exceeds the max wallets', async () => {
+          userWalletsFileManagementService.getUserWalletIds = jest.fn().mockResolvedValue(['wallet1']); // Already 1 wallet
+
+          await expect(walletService.createWallet('user1')).rejects.toThrow(MaxWalletsExceededException);
+          expect(walletFileManagementService.saveWallet).not.toHaveBeenCalled();
+      });
   });
 
   describe('getWallet', () => {

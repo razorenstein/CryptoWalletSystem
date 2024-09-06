@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Wallet } from '@shared/models';
-import { WalletAlreadyExistsException, WalletNotFoundException, UnauthorizedWalletAccessException, MaxWalletsExceededException } from '@shared/exceptions';
-import { WalletAssetService } from './wallet-asset-service.service';
+import { WalletNotFoundException, UnauthorizedWalletAccessException, MaxWalletsExceededException } from '@shared/exceptions';
 import { WalletTotalValue } from '../models/wallet-total-value.model';
 import { RateService } from './rate-service-api.service';
 import { WalletSystemLogger } from '@shared/logging';
 import { WalletFileManagementService, UserWalletsFileManagementService } from '@shared/file-management';
 import config from '../config/config';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class WalletService {
@@ -25,21 +25,16 @@ export class WalletService {
     }
   }
 
-  async createWallet(userId: string, walletId: string): Promise<Wallet> {
-    this.logger.log(`Creating wallet`, WalletService.name, { userId, walletId });
+  async createWallet(userId: string): Promise<Wallet> {
+    this.logger.log(`Creating wallet`, WalletService.name, { userId });
+    
+    const walletId = uuidv4(); 
     
     //Check how many wallets the user already has
     const userWallets = await this.userWalletsFileManagementService.getUserWalletIds(userId);
     if (userWallets && userWallets.length >= config.wallet.maxWalletsPerUser) {
       this.logger.warn(`User exceeded max wallet limit`, WalletService.name, { userId, walletId });
       throw new MaxWalletsExceededException(userId, config.wallet.maxWalletsPerUser);
-    }
-
-    //Check if the wallet already exists
-    const existingWallet = await this.walletFileManagementService.getWallet(walletId);
-    if (existingWallet) {
-      this.logger.warn(`Wallet already exists with this Id`, WalletService.name, { userId, walletId });
-      throw new WalletAlreadyExistsException(walletId, userId);
     }
 
     //Add the wallet ID to the user's list of wallets

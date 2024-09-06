@@ -1,11 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 
-export class WalletAlreadyExistsException extends HttpException {
-  constructor(walletId: string, userId: string) {
-    super(`Wallet with ID ${walletId} already exists`, HttpStatus.CONFLICT);
-  }
-}
-
 export class WalletNotFoundException extends HttpException {
   constructor(walletId: string, userId: string) {
     super(`Wallet with ID ${walletId} not found for user ${userId}`, HttpStatus.NOT_FOUND);
