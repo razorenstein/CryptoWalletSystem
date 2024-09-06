@@ -1,7 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { Rate } from '@shared/models'; 
-import { ApiCallFailedException } from '@shared/exceptions'; 
 import { AxiosResponse } from 'axios';
 import { firstValueFrom } from 'rxjs';
 import { WalletSystemLogger } from '@shared/logging';
@@ -34,7 +33,10 @@ export class RateApiService {
       }));
     } catch (error) {
       this.logger.error(`Failed to fetch rates from rates provider`, error.stack, RateApiService.name, { assetIds, currencies, url });
-      throw new ApiCallFailedException('RateService', url, error.message);
+      throw new HttpException({
+        message: 'Rates provider Error',
+        details: { assetIds, currencies, url, originalError: error.message },
+      }, 500);
     }
 
     this.logger.log(`Successfully fetched rates`, RateApiService.name, { assetIds, currencies });

@@ -10,15 +10,6 @@ export const mockWallet = {
   lastUpdated: new Date(),
 };
 
-export const emptyWallet: Wallet = {
-  id: 'generated-uuid', // This simulates the generated UUID
-  userId: 'user2',
-  cryptoAssets: [],
-  lastUpdated: new Date(),
-};
-
-export const mockWallets = [mockWallet];
-
 export const mockRatesResponse = {
   rates: [
     { assetId: 'bitcoin', currency: 'USD', value: 30000, timestamp: new Date() },
@@ -26,5 +17,4 @@ export const mockRatesResponse = {
   ]
 };
 
-export const mockUserWalletIds = ['wallet1'];
 

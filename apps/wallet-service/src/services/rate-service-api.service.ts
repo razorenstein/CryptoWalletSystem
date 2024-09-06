@@ -1,8 +1,7 @@
-import { Injectable,  } from '@nestjs/common';
+import { HttpException, Injectable,  } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import { WalletSystemLogger } from '@shared/logging';
-import { ApiCallFailedException } from '@shared/exceptions';
 import { RateResponseDto } from '@shared/dtos';
 import config from '../config/config';
 
@@ -22,7 +21,10 @@ export class RateService {
       return response.data;
     } catch (error) {
       this.logger.error(`Failed to fetch asset rates from rate-service`, error.stack, RateService.name, { assetIds, currency });
-      throw new ApiCallFailedException('RateService', url, error.message);
+      throw new HttpException({
+        message: 'RateService Error',
+        details: { assetIds, currency, url, originalError: error.message },
+      }, 500);
     }
   }
 }
