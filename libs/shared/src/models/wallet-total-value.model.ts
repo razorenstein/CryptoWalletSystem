@@ -1,6 +1,6 @@
 import { Wallet } from '@shared/models';
 
-export class WalletTotalValue {
+export interface WalletTotalValue {
   wallet: Wallet;
   totalValue: number;
   currency: string;

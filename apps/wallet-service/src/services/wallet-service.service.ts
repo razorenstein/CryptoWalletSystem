@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CryptoAsset, Wallet } from '@shared/models';
 import { WalletNotFoundException, UnauthorizedWalletAccessException, MaxWalletsExceededException, AssetNotFoundException, InsufficientAssetAmountException } from '@shared/exceptions';
-import { WalletTotalValue } from '../models/wallet-total-value.model';
 import { RateService } from './rate-service-api.service';
 import { WalletSystemLogger } from '@shared/logging';
 import { WalletFileManagementService, UserWalletsFileManagementService } from '@shared/file-management';
@@ -9,6 +8,7 @@ import config from '../config/config';
 import { v4 as uuidv4 } from 'uuid';
 import { RemoveAssetDto } from '../dtos/remove-asset-request.dto';
 import { AddAssetDto } from '../dtos/add-asset-request.dto';
+import { WalletTotalValue } from '@shared/models/wallet-total-value.model';
 
 @Injectable()
 export class WalletService {

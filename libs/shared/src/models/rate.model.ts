@@ -1,4 +1,4 @@
-export class Rate {
+export interface Rate {
     assetId: string; 
     currency: string; 
     value: number; //value in the specified currency

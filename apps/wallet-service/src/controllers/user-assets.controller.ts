@@ -1,7 +1,7 @@
 import { Controller, Get, Headers, Query, Version } from '@nestjs/common';
-import { UserAssetsTotalValue } from '../models/user-wallets-total-value.model';
 import { validateCurrency } from '@shared/utils';
 import { UserAssetsService } from '../services/user-assets.service';
+import { UserAssetsTotalValue } from '@shared/models/user-wallets-total-value.model';
 
 @Controller('user-assets')
 export class UserAssetsController {
