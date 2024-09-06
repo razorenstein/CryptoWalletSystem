@@ -1,7 +1,6 @@
 import { TestingModule, Test } from '@nestjs/testing';
 import { UserAssetsService } from '../src/services/user-assets.service';
 import { WalletService } from '../src/services/wallet-service.service';
-import { WalletAssetService } from '../src/services/wallet-asset-service.service';
 import { RateService } from '../src/services/rate-service-api.service';
 import { UserWalletsFileManagementService, WalletFileManagementService } from '@shared/file-management';
 import { WalletSystemLogger } from '@shared/logging';
@@ -11,7 +10,6 @@ export async function createTestModule() {
     providers: [
       UserAssetsService,
       WalletService,
-      WalletAssetService,
       WalletSystemLogger,
       {
         provide: WalletFileManagementService,
@@ -38,7 +36,6 @@ export async function createTestModule() {
 
   const userAssetsService = module.get<UserAssetsService>(UserAssetsService);
   const walletService = module.get<WalletService>(WalletService);
-  const walletAssetService = module.get<WalletAssetService>(WalletAssetService);
   const rateService = module.get<RateService>(RateService);
   const walletFileManagementService = module.get<WalletFileManagementService>(WalletFileManagementService);
   const userWalletsFileManagementService = module.get<UserWalletsFileManagementService>(UserWalletsFileManagementService);
@@ -47,7 +44,6 @@ export async function createTestModule() {
     module,
     userAssetsService,
     walletService,
-    walletAssetService,
     rateService,
     walletFileManagementService,
     userWalletsFileManagementService,
