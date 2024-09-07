@@ -10,8 +10,8 @@ export const mockWallet = {
   lastUpdated: new Date(),
 };
 
-export const mockRatesResponse = {
-  rates: [
+export const mockRatesResponse = 
+  [
     {
       assetId: 'bitcoin',
       currency: 'USD',
@@ -24,5 +24,4 @@ export const mockRatesResponse = {
       value: 2000,
       timestamp: new Date(),
     },
-  ],
-};
+  ];

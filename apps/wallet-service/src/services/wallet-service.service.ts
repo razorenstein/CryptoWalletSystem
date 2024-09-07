@@ -222,39 +222,29 @@ export class WalletService {
       walletId,
       currency,
     });
-
+  
     // Verify that the wallet belongs to the user
     await this.verifyUserWallet(userId, walletId);
-
+  
     // Retrieve the wallet
     const wallet = await this.getWallet(userId, walletId);
-    const assetIds = wallet.cryptoAssets.map((asset) => asset.id);
-
-    // Get the rates for the specified currency
-    const ratesResponse = await this.rateService.getAssetRates(assetIds, currency);
-
-    // Create a map of assetId to rate value for quick lookup
-    const ratesMap = ratesResponse.rates.reduce(
-      (acc, rate) => {
-        acc[rate.assetId] = rate.value;
-        return acc;
-      },
-      {} as Record<string, number>,
-    );
-
+  
+    // Use getRatesMap to get the rates for the specified currency
+    const ratesMap = await this.getRatesMap(wallet, currency);
+  
     // Calculate the total value of the wallet in the specified currency
     const totalValue = wallet.cryptoAssets.reduce((sum, asset) => {
       const rate = ratesMap[asset.id];
       return sum + asset.amount * rate;
     }, 0);
-
+  
     this.logger.log(`Total value calculated`, WalletService.name, {
       userId,
       walletId,
       currency,
       totalValue,
     });
-
+  
     return {
       wallet,
       totalValue,
@@ -349,7 +339,7 @@ export class WalletService {
     const assetIds = wallet.cryptoAssets.map((asset) => asset.id);
     const ratesResponse = await this.rateService.getAssetRates(assetIds, currency);
 
-    return ratesResponse.rates.reduce(
+    return ratesResponse.reduce(
       (acc, rate) => {
         acc[rate.assetId] = rate.value;
         return acc;

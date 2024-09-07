@@ -1,9 +1,9 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { lastValueFrom } from 'rxjs';
+import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import { WalletSystemLogger } from '@shared/logging';
-import { RateResponseDto } from '@shared/dtos';
 import config from '../config/config';
+import { Rate } from '@shared/models';
 
 @Injectable()
 export class RateService {
@@ -15,12 +15,12 @@ export class RateService {
   async getAssetRates(
     assetIds: string[],
     currency: string,
-  ): Promise<RateResponseDto> {
+  ): Promise<Rate[]> {
     const url = `${config.api.ratesApiBaseUrl}api/v1/rates?assetIds=${assetIds.join(',')}&currency=${currency}`;
 
     try {
-      const response = await lastValueFrom(
-        this.httpService.get<RateResponseDto>(url),
+      const response = await firstValueFrom(
+        this.httpService.get<Rate[]>(url),
       );
       this.logger.log(
         `Fetched asset rates from rate-service`,
