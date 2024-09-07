@@ -1,10 +1,11 @@
-import { Injectable, HttpException } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { Rate } from '@shared/models'; 
 import { AxiosResponse } from 'axios';
 import { firstValueFrom } from 'rxjs';
 import { WalletSystemLogger } from '@shared/logging';
 import config from '../config/config';
+import { HttpUtil } from '@shared/utils';
 
 @Injectable()
 export class RateApiService {
@@ -18,19 +19,18 @@ export class RateApiService {
     const ids = assetIds.join(',');
     const vsCurrencies = currencies.join(',');
 
-    this.logger.log(`Fetching rates`, RateApiService.name, { assetIds, currencies });
-
-    let response: AxiosResponse;
     const url = `${config.api.coinGeckoBaseUrl}api/v3/simple/price`;
-    
+
     try {
-      response = await firstValueFrom(this.httpService.get(url, {
-        params: {
-          ids: ids,
-          vs_currencies: vsCurrencies,
-          include_last_updated_at: 'true',
-        },
-      }));
+      const data = await HttpUtil.get<any>(this.httpService, url, {
+        ids: ids,
+        vs_currencies: vsCurrencies,
+        include_last_updated_at: 'true',
+      });
+
+      this.logger.log(`Successfully fetched rates`, RateApiService.name, { assetIds, currencies });
+      return this.parseRates(data, assetIds, currencies);
+
     } catch (error) {
       this.logger.error(`Failed to fetch rates from rates provider`, error.stack, RateApiService.name, { assetIds, currencies, url });
       throw new HttpException({
@@ -38,10 +38,6 @@ export class RateApiService {
         details: { assetIds, currencies, url, originalError: error.message },
       }, 500);
     }
-
-    this.logger.log(`Successfully fetched rates`, RateApiService.name, { assetIds, currencies });
-
-    return this.parseRates(response.data, assetIds, currencies);
   }
 
   private parseRates(data: any, assetIds: string[], currencies: string[]): Rate[] {

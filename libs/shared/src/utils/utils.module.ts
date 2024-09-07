@@ -3,9 +3,10 @@ import {
   IsAssetIdSupportedConstraint,
   UserIdValidationMiddleware,
 } from './validation';
+import { HttpUtil } from './http-util';
 
 @Module({
-  providers: [UserIdValidationMiddleware, IsAssetIdSupportedConstraint],
-  exports: [UserIdValidationMiddleware, IsAssetIdSupportedConstraint],
+  providers: [UserIdValidationMiddleware, IsAssetIdSupportedConstraint, HttpUtil],
+  exports: [UserIdValidationMiddleware, IsAssetIdSupportedConstraint, HttpUtil],
 })
 export class UtilsModule {}
