@@ -1,5 +1,5 @@
-import { AssetNotFoundException, InsufficientAssetAmountException, MaxWalletsExceededException, NoWalletForUserException, UnauthorizedWalletAccessException, WalletNotFoundException } from "@shared/exceptions";
-import { CryptoAsset, Wallet } from "@shared/models";
+import { AssetNotFoundException, InsufficientAssetAmountException, MaxWalletsExceededException, UnauthorizedWalletAccessException, WalletNotFoundException } from "@shared/exceptions";
+import { Wallet } from "@shared/models";
 import { AddAssetDto } from "../dtos/add-asset-request.dto";
 import config from "../config/config";
 import { WalletSystemLogger } from "@shared/logging";
@@ -72,7 +72,7 @@ export class WalletService {
     const newWallet: Wallet = {
       id: walletId,
       userId,
-      cryptoAssets: [],
+      cryptoAssets: {},  // Updated to use map for assets
       lastUpdated: new Date(),
     };
 
@@ -142,31 +142,23 @@ export class WalletService {
   ): Promise<Wallet> {
     const wallet = await this.getWallet(userId, walletId);
 
-    const assetIndex = wallet.cryptoAssets.findIndex(
-      (asset) => asset.id === addAssetDto.assetId,
-    );
-
-    if (assetIndex !== -1) {
+    if (wallet.cryptoAssets[addAssetDto.assetId]) {
       // Asset exists, update its value
-      wallet.cryptoAssets[assetIndex].amount += addAssetDto.amount;
+      wallet.cryptoAssets[addAssetDto.assetId] += addAssetDto.amount;
       this.logger.log(`Updated asset in wallet`, WalletService.name, {
         userId,
         walletId,
         assetId: addAssetDto.assetId,
-        value: wallet.cryptoAssets[assetIndex].amount,
+        value: wallet.cryptoAssets[addAssetDto.assetId],
       });
     } else {
       // Add new asset to the wallet
-      const newAsset: CryptoAsset = {
-        id: addAssetDto.assetId,
-        amount: addAssetDto.amount,
-      };
-      wallet.cryptoAssets.push(newAsset);
+      wallet.cryptoAssets[addAssetDto.assetId] = addAssetDto.amount;
       this.logger.log(`Added new asset to wallet`, WalletService.name, {
         userId,
         walletId,
-        assetId: newAsset.id,
-        value: newAsset.amount,
+        assetId: addAssetDto.assetId,
+        value: addAssetDto.amount,
       });
     }
 
@@ -183,22 +175,23 @@ export class WalletService {
   ): Promise<Wallet> {
     const wallet = await this.getWallet(userId, walletId);
 
-    const asset = wallet.cryptoAssets.find((asset) => asset.id === removeAssetDto.assetId);
-    if (!asset)
+    const assetAmount = wallet.cryptoAssets[removeAssetDto.assetId];
+    if (!assetAmount) {
       throw new AssetNotFoundException(removeAssetDto.assetId, walletId);
+    }
 
-    if (asset.amount < removeAssetDto.amount)
+    if (assetAmount < removeAssetDto.amount) {
       throw new InsufficientAssetAmountException(
         removeAssetDto.assetId,
-        asset.amount,
+        assetAmount,
         removeAssetDto.amount,
       );
+    }
 
-    asset.amount -= removeAssetDto.amount;
-    if (asset.amount === 0) {
-      wallet.cryptoAssets = wallet.cryptoAssets.filter(
-        (a) => a.id !== removeAssetDto.assetId,
-      );
+    wallet.cryptoAssets[removeAssetDto.assetId] -= removeAssetDto.amount;
+
+    if (wallet.cryptoAssets[removeAssetDto.assetId] === 0) {
+      delete wallet.cryptoAssets[removeAssetDto.assetId]; // Remove asset if amount is zero
     }
 
     const allWallets = await this.getAllWallets();
@@ -233,9 +226,9 @@ export class WalletService {
     const ratesMap = await this.getRatesMap(wallet, currency);
   
     // Calculate the total value of the wallet in the specified currency
-    const totalValue = wallet.cryptoAssets.reduce((sum, asset) => {
-      const rate = ratesMap[asset.id];
-      return sum + asset.amount * rate;
+    const totalValue = Object.entries(wallet.cryptoAssets).reduce((sum, [assetId, amount]) => {
+      const rate = ratesMap[assetId];
+      return sum + amount * rate;
     }, 0);
   
     this.logger.log(`Total value calculated`, WalletService.name, {
@@ -278,7 +271,7 @@ export class WalletService {
       totalValue += walletDetail.totalValue;
     }
 
-    this.logger.log(`Total user assets value calculated`, WalletService.name, { userId, currency, totalValue },);
+    this.logger.log(`Total user assets value calculated`, WalletService.name, { userId, currency, totalValue });
 
     return { wallets: walletDetails, totalValue, currency };
   }
@@ -303,24 +296,24 @@ export class WalletService {
     const ratesMap = await this.getRatesMap(wallet, currency);
 
     // Calculate the target value for each asset and adjust accordingly
-    for (const asset of wallet.cryptoAssets) {
-      const targetPercentage = targetPercentages[asset.id] || 0; // Default to 0 if not specified
+    for (const [assetId, amount] of Object.entries(wallet.cryptoAssets)) {
+      const targetPercentage = targetPercentages[assetId] || 0; // Default to 0 if not specified
       const targetValue = (targetPercentage / 100) * totalValue; // Target value based on the percentage
 
       // Determine the target amount of the asset based on its target value
-      const targetAmount = targetValue / ratesMap[asset.id];
+      const targetAmount = targetValue / ratesMap[assetId];
 
       // Adjust the asset amount in the wallet
-      if (targetAmount > asset.amount) {
-        const addAmount = targetAmount - asset.amount;
+      if (targetAmount > amount) {
+        const addAmount = targetAmount - amount;
         await this.addAsset(userId, walletId, {
-          assetId: asset.id,
+          assetId: assetId,
           amount: addAmount,
         });
-      } else if (targetAmount < asset.amount) {
-        const removeAmount = asset.amount - targetAmount;
+      } else if (targetAmount < amount) {
+        const removeAmount = amount - targetAmount;
         await this.removeAsset(userId, walletId, {
-          assetId: asset.id,
+          assetId: assetId,
           amount: removeAmount,
         });
       }
@@ -336,7 +329,7 @@ export class WalletService {
     wallet: Wallet,
     currency: string,
   ): Promise<Record<string, number>> {
-    const assetIds = wallet.cryptoAssets.map((asset) => asset.id);
+    const assetIds = Object.keys(wallet.cryptoAssets);
     const ratesResponse = await this.rateService.getAssetRates(assetIds, currency);
 
     return ratesResponse.reduce(

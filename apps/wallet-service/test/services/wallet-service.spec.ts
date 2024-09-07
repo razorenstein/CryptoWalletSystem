@@ -44,7 +44,7 @@ describe('WalletService', () => {
           [mockUUID]: {
             id: mockUUID,
             userId: 'user1',
-            cryptoAssets: [],
+            cryptoAssets: {}, // Now cryptoAssets is an empty object (map)
             lastUpdated: expect.any(Date),
           },
         }),
@@ -58,7 +58,7 @@ describe('WalletService', () => {
       expect(result).toEqual({
         id: mockUUID,
         userId: 'user1',
-        cryptoAssets: [],
+        cryptoAssets: {},
         lastUpdated: expect.any(Date),
       });
     });
@@ -155,10 +155,7 @@ describe('WalletService', () => {
       
       const result = await walletService.addAsset('user1', 'wallet1', newAssetDto);
 
-      expect(result.cryptoAssets).toContainEqual({
-        id: 'litecoin',
-        amount: 10,
-      });
+      expect(result.cryptoAssets['litecoin']).toBe(10); // Check that litecoin was added
       expect(fileManagementService.saveToFile).toHaveBeenCalled();
     });
 
@@ -171,15 +168,14 @@ describe('WalletService', () => {
 
       const result = await walletService.addAsset('user1', 'wallet1', existingAssetDto);
 
-      const bitcoin = result.cryptoAssets.find((asset) => asset.id === 'bitcoin');
-      expect(bitcoin.amount).toBe(5); // 2 (existing) + 3 (added)
+      expect(result.cryptoAssets['bitcoin']).toBe(5); // 2 (existing) + 3 (added)
       expect(fileManagementService.saveToFile).toHaveBeenCalled();
     });
   });
 
   describe('removeAsset', () => {
     it('should remove an asset from the wallet when the amount is reduced to zero', async () => {
-      const removeAssetDto: RemoveAssetDto = { assetId: 'bitcoin', amount: 2 };
+      const removeAssetDto: RemoveAssetDto = { assetId: 'bitcoin', amount: 5 };
 
       fileManagementService.readFromFile
         .mockResolvedValueOnce({ user1: ['wallet1'] })  // Ensure user owns the wallet
@@ -187,7 +183,7 @@ describe('WalletService', () => {
 
       const result = await walletService.removeAsset('user1', 'wallet1', removeAssetDto);
 
-      expect(result.cryptoAssets.length).toBe(3);
+      expect(result.cryptoAssets['bitcoin']).toBeUndefined(); // bitcoin should be removed
       expect(fileManagementService.saveToFile).toHaveBeenCalled();
     });
 
@@ -200,10 +196,7 @@ describe('WalletService', () => {
 
       const result = await walletService.removeAsset('user1', 'wallet1', removeAssetDto);
 
-      const ethereum = result.cryptoAssets.find(
-        (asset) => asset.id === 'ethereum',
-      );
-      expect(ethereum.amount).toBe(3); // 5 (existing) - 2 (removed)
+      expect(result.cryptoAssets['ethereum']).toBe(3); // 5 (existing) - 2 (removed)
       expect(fileManagementService.saveToFile).toHaveBeenCalled();
     });
   });
