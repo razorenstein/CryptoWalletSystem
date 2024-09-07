@@ -25,7 +25,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"walletId\": \"wallet123\"\n}",
+									"raw": "",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -60,7 +60,7 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:3001/api/v1/wallets/wallet123",
+									"raw": "http://localhost:3001/api/v1/wallets/8985c0ec-3aab-4f38-8646-3ad791e0adc8",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -70,7 +70,7 @@
 										"api",
 										"v1",
 										"wallets",
-										"wallet123"
+										"8985c0ec-3aab-4f38-8646-3ad791e0adc8"
 									]
 								}
 							},
@@ -88,7 +88,7 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:3001/api/v1/wallets/wallet123",
+									"raw": "http://localhost:3001/api/v1/wallets/a3a5ed06-cb0a-4841-8d47-18f85ac9de76",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -98,7 +98,7 @@
 										"api",
 										"v1",
 										"wallets",
-										"wallet123"
+										"a3a5ed06-cb0a-4841-8d47-18f85ac9de76"
 									]
 								}
 							},
@@ -116,7 +116,7 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:3001/api/v1/wallets/wallet123/value?currency=USD",
+									"raw": "http://localhost:3001/api/v1/wallets/value/8985c0ec-3aab-4f38-8646-3ad791e0adc8?currency=USD",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -126,8 +126,8 @@
 										"api",
 										"v1",
 										"wallets",
-										"wallet123",
-										"value"
+										"value",
+										"8985c0ec-3aab-4f38-8646-3ad791e0adc8"
 									],
 									"query": [
 										{
@@ -152,7 +152,8 @@
 									}
 								],
 								"url": {
-									"raw": "localhost:3001/api/v1/user-assets/total-value?currency=USD",
+									"raw": "http://localhost:3001/api/v1/wallets/user-assets/value?currency=USD",
+									"protocol": "http",
 									"host": [
 										"localhost"
 									],
@@ -160,8 +161,9 @@
 									"path": [
 										"api",
 										"v1",
+										"wallets",
 										"user-assets",
-										"total-value"
+										"value"
 									],
 									"query": [
 										{
@@ -192,7 +194,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"targetPercentages\": {\n    \"bitcoin\": 50,\n    \"ethereum\": 50\n    // \"oobit\": 20\n  }\n}",
+									"raw": "{\n  \"targetPercentages\": {\n    \"bitcoin\": 70,\n    \"ethereum\": 30\n    // \"oobit\": 20\n  }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -200,7 +202,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:3001/api/v1/user-assets/wallet123/rebalance",
+									"raw": "http://localhost:3001/api/v1/wallets/rebalance/8985c0ec-3aab-4f38-8646-3ad791e0adc8",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -209,9 +211,9 @@
 									"path": [
 										"api",
 										"v1",
-										"user-assets",
-										"wallet123",
-										"rebalance"
+										"wallets",
+										"rebalance",
+										"8985c0ec-3aab-4f38-8646-3ad791e0adc8"
 									]
 								}
 							},
@@ -230,7 +232,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"assetId\": \"oobit\",\n    \"amount\": 1\n}",
+									"raw": "{\n    \"assetId\": \"ethereum\",\n    \"amount\": 1\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -238,7 +240,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:3001/api/v1/assets/wallet123",
+									"raw": "http://localhost:3001/api/v1/wallets/assets/8985c0ec-3aab-4f38-8646-3ad791e0adc8",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -247,8 +249,9 @@
 									"path": [
 										"api",
 										"v1",
+										"wallets",
 										"assets",
-										"wallet123"
+										"8985c0ec-3aab-4f38-8646-3ad791e0adc8"
 									]
 								}
 							},
@@ -275,7 +278,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:3001/api/v1/assets/wallet123",
+									"raw": "http://localhost:3001/api/v1/wallets/assets/8985c0ec-3aab-4f38-8646-3ad791e0adc8",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -284,8 +287,9 @@
 									"path": [
 										"api",
 										"v1",
+										"wallets",
 										"assets",
-										"wallet123"
+										"8985c0ec-3aab-4f38-8646-3ad791e0adc8"
 									]
 								}
 							},
