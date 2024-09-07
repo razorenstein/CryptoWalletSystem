@@ -1,6 +1,6 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { Rate } from '@shared/models';
+import { Rate } from '@shared/models'; 
 import { AxiosResponse } from 'axios';
 import { firstValueFrom } from 'rxjs';
 import { WalletSystemLogger } from '@shared/logging';
@@ -8,62 +8,43 @@ import config from '../config/config';
 
 @Injectable()
 export class RateApiService {
+
   constructor(
     private readonly httpService: HttpService,
-    private readonly logger: WalletSystemLogger,
+    private readonly logger: WalletSystemLogger, 
   ) {}
 
   async fetchRates(assetIds: string[], currencies: string[]): Promise<Rate[]> {
     const ids = assetIds.join(',');
     const vsCurrencies = currencies.join(',');
 
-    this.logger.log(`Fetching rates`, RateApiService.name, {
-      assetIds,
-      currencies,
-    });
+    this.logger.log(`Fetching rates`, RateApiService.name, { assetIds, currencies });
 
     let response: AxiosResponse;
     const url = `${config.api.coinGeckoBaseUrl}api/v3/simple/price`;
-
+    
     try {
-      response = await firstValueFrom(
-        this.httpService.get(url, {
-          params: {
-            ids: ids,
-            vs_currencies: vsCurrencies,
-            include_last_updated_at: 'true',
-          },
-        }),
-      );
-    } catch (error) {
-      this.logger.error(
-        `Failed to fetch rates from rates provider`,
-        error.stack,
-        RateApiService.name,
-        { assetIds, currencies, url },
-      );
-      throw new HttpException(
-        {
-          message: 'Rates provider Error',
-          details: { assetIds, currencies, url, originalError: error.message },
+      response = await firstValueFrom(this.httpService.get(url, {
+        params: {
+          ids: ids,
+          vs_currencies: vsCurrencies,
+          include_last_updated_at: 'true',
         },
-        500,
-      );
+      }));
+    } catch (error) {
+      this.logger.error(`Failed to fetch rates from rates provider`, error.stack, RateApiService.name, { assetIds, currencies, url });
+      throw new HttpException({
+        message: 'Rates provider Error',
+        details: { assetIds, currencies, url, originalError: error.message },
+      }, 500);
     }
 
-    this.logger.log(`Successfully fetched rates`, RateApiService.name, {
-      assetIds,
-      currencies,
-    });
+    this.logger.log(`Successfully fetched rates`, RateApiService.name, { assetIds, currencies });
 
     return this.parseRates(response.data, assetIds, currencies);
   }
 
-  private parseRates(
-    data: any,
-    assetIds: string[],
-    currencies: string[],
-  ): Rate[] {
+  private parseRates(data: any, assetIds: string[], currencies: string[]): Rate[] {
     const rates: Rate[] = [];
 
     for (const assetId of assetIds) {
@@ -83,11 +64,7 @@ export class RateApiService {
       }
     }
 
-    this.logger.log(`Parsed rates successfully`, RateApiService.name, {
-      assetIds,
-      currencies,
-      ratesCount: rates.length,
-    });
+    this.logger.log(`Parsed rates successfully`, RateApiService.name, { assetIds, currencies, ratesCount: rates.length });
 
     return rates;
   }

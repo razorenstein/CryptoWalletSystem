@@ -1,31 +1,19 @@
 import { TestingModule, Test } from '@nestjs/testing';
-import { UserAssetsService } from '../src/services/user-assets.service';
 import { WalletService } from '../src/services/wallet-service.service';
+import { FileManagementService } from '@shared/file-management';
 import { RateService } from '../src/services/rate-service-api.service';
-import {
-  UserWalletsFileManagementService,
-  WalletFileManagementService,
-} from '@shared/file-management';
 import { WalletSystemLogger } from '@shared/logging';
 
 export async function createTestModule() {
   const module: TestingModule = await Test.createTestingModule({
     providers: [
-      UserAssetsService,
       WalletService,
-      WalletSystemLogger,
       {
-        provide: WalletFileManagementService,
+        provide: FileManagementService,
         useValue: {
-          getWallet: jest.fn(),
-          saveWallet: jest.fn(),
-        },
-      },
-      {
-        provide: UserWalletsFileManagementService,
-        useValue: {
-          getUserWalletIds: jest.fn(),
-          addUserWallet: jest.fn(),
+          readFromFile: jest.fn(),
+          saveToFile: jest.fn(),
+          deleteFile: jest.fn(),
         },
       },
       {
@@ -34,26 +22,27 @@ export async function createTestModule() {
           getAssetRates: jest.fn(),
         },
       },
+      {
+        provide: WalletSystemLogger,
+        useValue: {
+          log: jest.fn(),
+          warn: jest.fn(),
+          error: jest.fn(),
+        },
+      },
     ],
   }).compile();
 
-  const userAssetsService = module.get<UserAssetsService>(UserAssetsService);
   const walletService = module.get<WalletService>(WalletService);
+  const fileManagementService = module.get<FileManagementService>(FileManagementService);
   const rateService = module.get<RateService>(RateService);
-  const walletFileManagementService = module.get<WalletFileManagementService>(
-    WalletFileManagementService,
-  );
-  const userWalletsFileManagementService =
-    module.get<UserWalletsFileManagementService>(
-      UserWalletsFileManagementService,
-    );
+  const logger = module.get<WalletSystemLogger>(WalletSystemLogger);
 
   return {
     module,
-    userAssetsService,
     walletService,
+    fileManagementService,
     rateService,
-    walletFileManagementService,
-    userWalletsFileManagementService,
+    logger,
   };
 }

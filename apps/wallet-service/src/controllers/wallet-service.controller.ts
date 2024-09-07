@@ -18,6 +18,7 @@ import { AddAssetDto } from '../dtos/add-asset-request.dto';
 import { RemoveAssetDto } from '../dtos/remove-asset-request.dto';
 import { RebalanceWalletDto } from '../dtos/rebalance-wallet-dto';
 import { WalletTotalValue } from '@shared/models/wallet-total-value.model';
+import { UserAssetsTotalValue } from '@shared/models/user-wallets-total-value.model';
 
 @Controller('wallets')
 export class WalletServiceController {
@@ -60,6 +61,20 @@ export class WalletServiceController {
     return await this.walletService.calculateTotalValue(
       userId,
       walletId,
+      currency,
+    );
+  }
+
+  @Get('user-assets/value')
+  @Version('1')
+  async getTotalUserAssetsValue(
+    @Headers('X-User-ID') userId: string,
+    @Query('currency') currency: string,
+  ): Promise<UserAssetsTotalValue> {
+    validateCurrency(currency);
+
+    return this.walletService.calculateTotalUserAssetsValue(
+      userId,
       currency,
     );
   }

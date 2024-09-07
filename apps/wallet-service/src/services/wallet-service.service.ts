@@ -1,40 +1,44 @@
-import { Injectable } from '@nestjs/common';
-import { CryptoAsset, Wallet } from '@shared/models';
-import {
-  WalletNotFoundException,
-  UnauthorizedWalletAccessException,
-  MaxWalletsExceededException,
-  AssetNotFoundException,
-  InsufficientAssetAmountException,
-} from '@shared/exceptions';
-import { RateService } from './rate-service-api.service';
-import { WalletSystemLogger } from '@shared/logging';
-import {
-  WalletFileManagementService,
-  UserWalletsFileManagementService,
-} from '@shared/file-management';
-import config from '../config/config';
+import { AssetNotFoundException, InsufficientAssetAmountException, MaxWalletsExceededException, NoWalletForUserException, UnauthorizedWalletAccessException, WalletNotFoundException } from "@shared/exceptions";
+import { CryptoAsset, Wallet } from "@shared/models";
+import { AddAssetDto } from "../dtos/add-asset-request.dto";
+import config from "../config/config";
+import { WalletSystemLogger } from "@shared/logging";
+import { FileManagementService } from "@shared/file-management";
+import { RateService } from "./rate-service-api.service";
+import { Injectable } from "@nestjs/common";
 import { v4 as uuidv4 } from 'uuid';
-import { RemoveAssetDto } from '../dtos/remove-asset-request.dto';
-import { AddAssetDto } from '../dtos/add-asset-request.dto';
-import { WalletTotalValue } from '@shared/models/wallet-total-value.model';
+import { RemoveAssetDto } from "../dtos/remove-asset-request.dto";
+import { WalletTotalValue } from "@shared/models/wallet-total-value.model";
+import { UserAssetsTotalValue } from "@shared/models/user-wallets-total-value.model";
 
 @Injectable()
 export class WalletService {
+
   constructor(
     private readonly rateService: RateService,
-    private readonly userWalletsFileManagementService: UserWalletsFileManagementService,
-    private readonly walletFileManagementService: WalletFileManagementService,
+    private readonly fileManagementService: FileManagementService,
     private readonly logger: WalletSystemLogger,
   ) {}
 
-  private async verifyUserWallet(
-    userId: string,
-    walletId: string,
-  ): Promise<void> {
-    const userWallets =
-      await this.userWalletsFileManagementService.getUserWalletIds(userId);
-    if (!userWallets || !userWallets.includes(walletId)) {
+  private async getAllWallets(): Promise<Record<string, Wallet>> {
+    return (await this.fileManagementService.readFromFile<Record<string, Wallet>>(config.fileNames.walletsFile)) || {};
+  }
+
+  private async saveAllWallets(wallets: Record<string, Wallet>): Promise<void> {
+    await this.fileManagementService.saveToFile(config.fileNames.walletsFile, wallets);
+  }
+
+  private async getAllUserWallets(): Promise<Record<string, string[]>> {
+    return (await this.fileManagementService.readFromFile<Record<string, string[]>>(config.fileNames.usersFile)) || {};
+  }
+
+  private async saveAllUserWallets(userWallets: Record<string, string[]>): Promise<void> {
+    await this.fileManagementService.saveToFile(config.fileNames.usersFile, userWallets);
+  }
+
+  private async verifyUserWallet(userId: string, walletId: string): Promise<void> {
+    const userWallets = await this.getAllUserWallets();
+    if (!userWallets[userId] || !userWallets[userId].includes(walletId)) {
       this.logger.warn(`Unauthorized access attempt`, WalletService.name, {
         userId,
         walletId,
@@ -48,31 +52,33 @@ export class WalletService {
 
     const walletId = uuidv4();
 
-    //Check how many wallets the user already has
-    const userWallets =
-      await this.userWalletsFileManagementService.getUserWalletIds(userId);
-    if (userWallets && userWallets.length >= config.wallet.maxWalletsPerUser) {
+    const userWallets = await this.getAllUserWallets();
+    if (!userWallets[userId]) {
+      userWallets[userId] = [];
+    }
+    if (userWallets[userId].length >= config.wallet.maxWalletsPerUser) {
       this.logger.warn(`User exceeded max wallet limit`, WalletService.name, {
         userId,
         walletId,
       });
-      throw new MaxWalletsExceededException(
-        userId,
-        config.wallet.maxWalletsPerUser,
-      );
+      throw new MaxWalletsExceededException(userId, config.wallet.maxWalletsPerUser);
     }
 
-    //Add the wallet ID to the user's list of wallets
-    await this.userWalletsFileManagementService.addUserWallet(userId, walletId);
+    // Add the wallet ID to the user's list of wallets
+    userWallets[userId].push(walletId);
+    await this.saveAllUserWallets(userWallets);
 
-    //Create the new wallet and save it
+    // Add the wallet to the wallets collection
     const newWallet: Wallet = {
       id: walletId,
       userId,
       cryptoAssets: [],
       lastUpdated: new Date(),
     };
-    await this.walletFileManagementService.saveWallet(newWallet);
+
+    const allWallets = await this.getAllWallets();
+    allWallets[walletId] = newWallet;
+    await this.saveAllWallets(allWallets);
 
     this.logger.log(`Wallet created successfully`, WalletService.name, {
       userId,
@@ -89,7 +95,8 @@ export class WalletService {
 
     await this.verifyUserWallet(userId, walletId);
 
-    const wallet = await this.walletFileManagementService.getWallet(walletId);
+    const allWallets = await this.getAllWallets();
+    const wallet = allWallets[walletId];
     if (!wallet) {
       this.logger.warn(`Wallet not found`, WalletService.name, {
         userId,
@@ -110,19 +117,99 @@ export class WalletService {
       userId,
       walletId,
     });
-
+  
     await this.verifyUserWallet(userId, walletId);
+  
+    // Delete the wallet from the wallets collection
+    const allWallets = await this.getAllWallets();
+    delete allWallets[walletId];
+    await this.saveAllWallets(allWallets);
+  
+    // Remove the wallet ID from the user's list of wallets
+    const userWallets = await this.getAllUserWallets();
+  
+    userWallets[userId] = userWallets[userId].filter(id => id !== walletId);
+  
+    await this.saveAllUserWallets(userWallets);
+  
+    this.logger.log(`Wallet deleted successfully`, WalletService.name, { userId, walletId });
+  }
+  
+  async addAsset(
+    userId: string,
+    walletId: string,
+    addAssetDto: AddAssetDto,
+  ): Promise<Wallet> {
+    const wallet = await this.getWallet(userId, walletId);
 
-    await this.walletFileManagementService.deleteWallet(userId, walletId);
-    await this.userWalletsFileManagementService.removeUserWallet(
-      userId,
-      walletId,
+    const assetIndex = wallet.cryptoAssets.findIndex(
+      (asset) => asset.id === addAssetDto.assetId,
     );
 
-    this.logger.log(`Wallet deleted successfully`, WalletService.name, {
-      userId,
-      walletId,
-    });
+    if (assetIndex !== -1) {
+      // Asset exists, update its value
+      wallet.cryptoAssets[assetIndex].amount += addAssetDto.amount;
+      this.logger.log(`Updated asset in wallet`, WalletService.name, {
+        userId,
+        walletId,
+        assetId: addAssetDto.assetId,
+        value: wallet.cryptoAssets[assetIndex].amount,
+      });
+    } else {
+      // Add new asset to the wallet
+      const newAsset: CryptoAsset = {
+        id: addAssetDto.assetId,
+        amount: addAssetDto.amount,
+      };
+      wallet.cryptoAssets.push(newAsset);
+      this.logger.log(`Added new asset to wallet`, WalletService.name, {
+        userId,
+        walletId,
+        assetId: newAsset.id,
+        value: newAsset.amount,
+      });
+    }
+
+    const allWallets = await this.getAllWallets();
+    allWallets[walletId] = wallet;
+    await this.saveAllWallets(allWallets);
+    return wallet;
+  }
+
+  async removeAsset(
+    userId: string,
+    walletId: string,
+    removeAssetDto: RemoveAssetDto,
+  ): Promise<Wallet> {
+    const wallet = await this.getWallet(userId, walletId);
+
+    const asset = wallet.cryptoAssets.find((asset) => asset.id === removeAssetDto.assetId);
+    if (!asset)
+      throw new AssetNotFoundException(removeAssetDto.assetId, walletId);
+
+    if (asset.amount < removeAssetDto.amount)
+      throw new InsufficientAssetAmountException(
+        removeAssetDto.assetId,
+        asset.amount,
+        removeAssetDto.amount,
+      );
+
+    asset.amount -= removeAssetDto.amount;
+    if (asset.amount === 0) {
+      wallet.cryptoAssets = wallet.cryptoAssets.filter(
+        (a) => a.id !== removeAssetDto.assetId,
+      );
+    }
+
+    const allWallets = await this.getAllWallets();
+    allWallets[walletId] = wallet;
+    await this.saveAllWallets(allWallets);
+    this.logger.log(
+      `Asset ${removeAssetDto.assetId} updated in wallet ${walletId} for user ${userId}`,
+      WalletService.name,
+    );
+
+    return wallet;
   }
 
   async calculateTotalValue(
@@ -144,10 +231,7 @@ export class WalletService {
     const assetIds = wallet.cryptoAssets.map((asset) => asset.id);
 
     // Get the rates for the specified currency
-    const ratesResponse = await this.rateService.getAssetRates(
-      assetIds,
-      currency,
-    );
+    const ratesResponse = await this.rateService.getAssetRates(assetIds, currency);
 
     // Create a map of assetId to rate value for quick lookup
     const ratesMap = ratesResponse.rates.reduce(
@@ -178,87 +262,35 @@ export class WalletService {
     };
   }
 
-  async addAsset(
+  async calculateTotalUserAssetsValue(
     userId: string,
-    walletId: string,
-    addAssetDto: AddAssetDto,
-  ): Promise<Wallet> {
-    const wallet = await this.walletFileManagementService.getWallet(walletId);
+    currency: string,
+  ): Promise<UserAssetsTotalValue> {
+    this.logger.log(`Calculating total user assets value`, WalletService.name, { userId, currency });
 
-    if (!wallet) {
-      this.logger.warn(
-        `Wallet not found for adding asset`,
-        WalletService.name,
-        { userId, walletId },
-      );
-      throw new WalletNotFoundException(walletId, userId);
-    }
+    // Retrieve all wallet IDs for the user
+    const allUserWallets = await this.getAllUserWallets();
+    const walletIds = allUserWallets[userId] || [];
 
-    const assetIndex = wallet.cryptoAssets.findIndex(
-      (asset) => asset.id === addAssetDto.assetId,
-    );
-    if (assetIndex !== -1) {
-      // Asset exists, update its value
-      wallet.cryptoAssets[assetIndex].amount += addAssetDto.amount;
-      this.logger.log(`Updated asset in wallet`, WalletService.name, {
+    let totalValue = 0;
+    const walletDetails: WalletTotalValue[] = [];
+
+    // Loop through each wallet ID and calculate its total value
+    for (const walletId of walletIds) {
+      const walletDetail = await this.calculateTotalValue(
         userId,
         walletId,
-        assetId: addAssetDto.assetId,
-        value: wallet.cryptoAssets[assetIndex].amount,
-      });
-    } else {
-      // Add new asset to the wallet
-      const newAsset: CryptoAsset = {
-        id: addAssetDto.assetId,
-        amount: addAssetDto.amount,
-      };
-      wallet.cryptoAssets.push(newAsset);
-      this.logger.log(`Added new asset to wallet`, WalletService.name, {
-        userId,
-        walletId,
-        assetId: newAsset.id,
-        value: newAsset.amount,
-      });
+        currency,
+      );
+
+      // Accumulate the wallet details and total value
+      walletDetails.push(walletDetail);
+      totalValue += walletDetail.totalValue;
     }
 
-    await this.walletFileManagementService.saveWallet(wallet);
-    return wallet;
-  }
+    this.logger.log(`Total user assets value calculated`, WalletService.name, { userId, currency, totalValue },);
 
-  async removeAsset(
-    userId: string,
-    walletId: string,
-    removeAssetDto: RemoveAssetDto,
-  ): Promise<Wallet> {
-    const wallet = await this.walletFileManagementService.getWallet(walletId);
-    if (!wallet) throw new WalletNotFoundException(walletId, userId);
-
-    const asset = wallet.cryptoAssets.find(
-      (asset) => asset.id === removeAssetDto.assetId,
-    );
-    if (!asset)
-      throw new AssetNotFoundException(removeAssetDto.assetId, walletId);
-
-    if (asset.amount < removeAssetDto.amount)
-      throw new InsufficientAssetAmountException(
-        removeAssetDto.assetId,
-        asset.amount,
-        removeAssetDto.amount,
-      );
-
-    asset.amount -= removeAssetDto.amount;
-    if (asset.amount === 0)
-      wallet.cryptoAssets = wallet.cryptoAssets.filter(
-        (a) => a.id !== removeAssetDto.assetId,
-      );
-
-    await this.walletFileManagementService.saveWallet(wallet);
-    this.logger.log(
-      `Asset ${removeAssetDto.assetId} updated in wallet ${walletId} for user ${userId}`,
-      WalletService.name,
-    );
-
-    return wallet;
+    return { wallets: walletDetails, totalValue, currency };
   }
 
   async rebalance(
@@ -315,10 +347,7 @@ export class WalletService {
     currency: string,
   ): Promise<Record<string, number>> {
     const assetIds = wallet.cryptoAssets.map((asset) => asset.id);
-    const ratesResponse = await this.rateService.getAssetRates(
-      assetIds,
-      currency,
-    );
+    const ratesResponse = await this.rateService.getAssetRates(assetIds, currency);
 
     return ratesResponse.rates.reduce(
       (acc, rate) => {

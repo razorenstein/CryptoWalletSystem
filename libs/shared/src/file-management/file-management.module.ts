@@ -1,14 +1,12 @@
 import { Module } from '@nestjs/common';
-import { UserWalletsFileManagementService } from './user-wallets-file-management.service';
-import { WalletFileManagementService } from './wallet-file-management.service';
 import { WalletSystemLogger } from '../logging';
+import { FileManagementService } from './file-managment-service';
 
 @Module({
   providers: [
     WalletSystemLogger,
-    UserWalletsFileManagementService,
-    WalletFileManagementService,
+    FileManagementService
   ],
-  exports: [UserWalletsFileManagementService, WalletFileManagementService],
+  exports: [FileManagementService],
 })
 export class FileManagementModule {}

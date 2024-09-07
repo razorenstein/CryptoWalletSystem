@@ -32,3 +32,9 @@ export class MaxWalletsExceededException extends HttpException {
     );
   }
 }
+
+export class NoWalletForUserException extends HttpException {
+  constructor(userId: string) {
+    super(`No wallets found for user "${userId}".`, HttpStatus.NOT_FOUND);
+  }
+}
