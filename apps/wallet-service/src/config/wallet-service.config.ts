@@ -6,7 +6,7 @@ export default {
     ratesApiBaseUrl: 'http://localhost:3000/',
   },
   fileNames: {
-     walletsFile: 'wallets',
-     usersFile: 'users-wallets'
-  }
+    walletsFile: 'wallets',
+    usersFile: 'users-wallets',
+  },
 };

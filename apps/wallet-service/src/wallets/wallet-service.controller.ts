@@ -73,10 +73,7 @@ export class WalletServiceController {
   ): Promise<UserAssetsTotalValue> {
     validateCurrency(currency);
 
-    return this.walletService.calculateTotalUserAssetsValue(
-      userId,
-      currency,
-    );
+    return this.walletService.calculateTotalUserAssetsValue(userId, currency);
   }
 
   @Post('assets/:walletId')

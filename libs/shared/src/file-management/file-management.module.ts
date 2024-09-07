@@ -3,10 +3,7 @@ import { WalletSystemLogger } from '../logging';
 import { FileManagementService } from './file-managment-service';
 
 @Module({
-  providers: [
-    WalletSystemLogger,
-    FileManagementService
-  ],
+  providers: [WalletSystemLogger, FileManagementService],
   exports: [FileManagementService],
 })
 export class FileManagementModule {}

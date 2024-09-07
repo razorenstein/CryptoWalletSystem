@@ -34,7 +34,9 @@ export async function createTestModule() {
   }).compile();
 
   const walletService = module.get<WalletService>(WalletService);
-  const fileManagementService = module.get<FileManagementService>(FileManagementService);
+  const fileManagementService = module.get<FileManagementService>(
+    FileManagementService,
+  );
   const rateService = module.get<RateService>(RateService);
   const logger = module.get<WalletSystemLogger>(WalletSystemLogger);
 

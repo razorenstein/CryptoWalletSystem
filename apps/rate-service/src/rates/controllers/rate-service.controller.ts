@@ -20,6 +20,6 @@ export class RateController {
       currency,
     );
 
-    return rates ;
+    return rates;
   }
 }

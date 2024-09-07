@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { Rate } from '@shared/models'; 
+import { Rate } from '@shared/models';
 import { AxiosResponse } from 'axios';
 import { firstValueFrom } from 'rxjs';
 import { WalletSystemLogger } from '@shared/logging';
@@ -9,10 +9,9 @@ import { HttpUtil } from '@shared/utils';
 
 @Injectable()
 export class RateApiService {
-
   constructor(
     private readonly httpService: HttpService,
-    private readonly logger: WalletSystemLogger, 
+    private readonly logger: WalletSystemLogger,
   ) {}
 
   async fetchRates(assetIds: string[], currencies: string[]): Promise<Rate[]> {
@@ -28,19 +27,33 @@ export class RateApiService {
         include_last_updated_at: 'true',
       });
 
-      this.logger.log(`Successfully fetched rates`, RateApiService.name, { assetIds, currencies });
+      this.logger.log(`Successfully fetched rates`, RateApiService.name, {
+        assetIds,
+        currencies,
+      });
       return this.parseRates(data, assetIds, currencies);
-
     } catch (error) {
-      this.logger.error(`Failed to fetch rates from rates provider`, error.stack, RateApiService.name, { assetIds, currencies, url });
-      throw new HttpException({
-        message: 'Rates provider Error',
-        details: { assetIds, currencies, url, originalError: error.message },
-      }, 500);
+      this.logger.error(
+        `Failed to fetch rates from rates provider`,
+        error.stack,
+        RateApiService.name,
+        { assetIds, currencies, url },
+      );
+      throw new HttpException(
+        {
+          message: 'Rates provider Error',
+          details: { assetIds, currencies, url, originalError: error.message },
+        },
+        500,
+      );
     }
   }
 
-  private parseRates(data: any, assetIds: string[], currencies: string[]): Rate[] {
+  private parseRates(
+    data: any,
+    assetIds: string[],
+    currencies: string[],
+  ): Rate[] {
     const rates: Rate[] = [];
 
     for (const assetId of assetIds) {
@@ -60,7 +73,11 @@ export class RateApiService {
       }
     }
 
-    this.logger.log(`Parsed rates successfully`, RateApiService.name, { assetIds, currencies, ratesCount: rates.length });
+    this.logger.log(`Parsed rates successfully`, RateApiService.name, {
+      assetIds,
+      currencies,
+      ratesCount: rates.length,
+    });
 
     return rates;
   }

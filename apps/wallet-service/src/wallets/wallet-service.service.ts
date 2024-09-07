@@ -1,19 +1,24 @@
-import { AssetNotFoundException, InsufficientAssetAmountException, MaxWalletsExceededException, UnauthorizedWalletAccessException, WalletNotFoundException } from "@shared/exceptions";
-import { Wallet } from "@shared/models";
-import { AddAssetDto } from "./dtos/add-asset-request.dto";
-import config from "../config/wallet-service.config";
-import { WalletSystemLogger } from "@shared/logging";
-import { FileManagementService } from "@shared/file-management";
-import { RateService } from "./rate-service-api.service";
-import { Injectable } from "@nestjs/common";
+import {
+  AssetNotFoundException,
+  InsufficientAssetAmountException,
+  MaxWalletsExceededException,
+  UnauthorizedWalletAccessException,
+  WalletNotFoundException,
+} from '@shared/exceptions';
+import { Wallet } from '@shared/models';
+import { AddAssetDto } from './dtos/add-asset-request.dto';
+import config from '../config/wallet-service.config';
+import { WalletSystemLogger } from '@shared/logging';
+import { FileManagementService } from '@shared/file-management';
+import { RateService } from './rate-service-api.service';
+import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { RemoveAssetDto } from "./dtos/remove-asset-request.dto";
-import { WalletTotalValue } from "@shared/models/wallet-total-value.model";
-import { UserAssetsTotalValue } from "@shared/models/user-wallets-total-value.model";
+import { RemoveAssetDto } from './dtos/remove-asset-request.dto';
+import { WalletTotalValue } from '@shared/models/wallet-total-value.model';
+import { UserAssetsTotalValue } from '@shared/models/user-wallets-total-value.model';
 
 @Injectable()
 export class WalletService {
-
   constructor(
     private readonly rateService: RateService,
     private readonly fileManagementService: FileManagementService,
@@ -21,22 +26,41 @@ export class WalletService {
   ) {}
 
   private async getAllWallets(): Promise<Record<string, Wallet>> {
-    return (await this.fileManagementService.readFromFile<Record<string, Wallet>>(config.fileNames.walletsFile)) || {};
+    return (
+      (await this.fileManagementService.readFromFile<Record<string, Wallet>>(
+        config.fileNames.walletsFile,
+      )) || {}
+    );
   }
 
   private async saveAllWallets(wallets: Record<string, Wallet>): Promise<void> {
-    await this.fileManagementService.saveToFile(config.fileNames.walletsFile, wallets);
+    await this.fileManagementService.saveToFile(
+      config.fileNames.walletsFile,
+      wallets,
+    );
   }
 
   private async getAllUserWallets(): Promise<Record<string, string[]>> {
-    return (await this.fileManagementService.readFromFile<Record<string, string[]>>(config.fileNames.usersFile)) || {};
+    return (
+      (await this.fileManagementService.readFromFile<Record<string, string[]>>(
+        config.fileNames.usersFile,
+      )) || {}
+    );
   }
 
-  private async saveAllUserWallets(userWallets: Record<string, string[]>): Promise<void> {
-    await this.fileManagementService.saveToFile(config.fileNames.usersFile, userWallets);
+  private async saveAllUserWallets(
+    userWallets: Record<string, string[]>,
+  ): Promise<void> {
+    await this.fileManagementService.saveToFile(
+      config.fileNames.usersFile,
+      userWallets,
+    );
   }
 
-  private async verifyUserWallet(userId: string, walletId: string): Promise<void> {
+  private async verifyUserWallet(
+    userId: string,
+    walletId: string,
+  ): Promise<void> {
     const userWallets = await this.getAllUserWallets();
     if (!userWallets[userId] || !userWallets[userId].includes(walletId)) {
       this.logger.warn(`Unauthorized access attempt`, WalletService.name, {
@@ -61,7 +85,10 @@ export class WalletService {
         userId,
         walletId,
       });
-      throw new MaxWalletsExceededException(userId, config.wallet.maxWalletsPerUser);
+      throw new MaxWalletsExceededException(
+        userId,
+        config.wallet.maxWalletsPerUser,
+      );
     }
 
     // Add the wallet ID to the user's list of wallets
@@ -72,7 +99,7 @@ export class WalletService {
     const newWallet: Wallet = {
       id: walletId,
       userId,
-      cryptoAssets: {},  // Updated to use map for assets
+      cryptoAssets: {}, // Updated to use map for assets
       lastUpdated: new Date(),
     };
 
@@ -117,24 +144,27 @@ export class WalletService {
       userId,
       walletId,
     });
-  
+
     await this.verifyUserWallet(userId, walletId);
-  
+
     // Delete the wallet from the wallets collection
     const allWallets = await this.getAllWallets();
     delete allWallets[walletId];
     await this.saveAllWallets(allWallets);
-  
+
     // Remove the wallet ID from the user's list of wallets
     const userWallets = await this.getAllUserWallets();
-  
-    userWallets[userId] = userWallets[userId].filter(id => id !== walletId);
-  
+
+    userWallets[userId] = userWallets[userId].filter((id) => id !== walletId);
+
     await this.saveAllUserWallets(userWallets);
-  
-    this.logger.log(`Wallet deleted successfully`, WalletService.name, { userId, walletId });
+
+    this.logger.log(`Wallet deleted successfully`, WalletService.name, {
+      userId,
+      walletId,
+    });
   }
-  
+
   async addAsset(
     userId: string,
     walletId: string,
@@ -215,29 +245,32 @@ export class WalletService {
       walletId,
       currency,
     });
-  
+
     // Verify that the wallet belongs to the user
     await this.verifyUserWallet(userId, walletId);
-  
+
     // Retrieve the wallet
     const wallet = await this.getWallet(userId, walletId);
-  
+
     // Use getRatesMap to get the rates for the specified currency
     const ratesMap = await this.getRatesMap(wallet, currency);
-  
+
     // Calculate the total value of the wallet in the specified currency
-    const totalValue = Object.entries(wallet.cryptoAssets).reduce((sum, [assetId, amount]) => {
-      const rate = ratesMap[assetId];
-      return sum + amount * rate;
-    }, 0);
-  
+    const totalValue = Object.entries(wallet.cryptoAssets).reduce(
+      (sum, [assetId, amount]) => {
+        const rate = ratesMap[assetId];
+        return sum + amount * rate;
+      },
+      0,
+    );
+
     this.logger.log(`Total value calculated`, WalletService.name, {
       userId,
       walletId,
       currency,
       totalValue,
     });
-  
+
     return {
       wallet,
       totalValue,
@@ -249,7 +282,10 @@ export class WalletService {
     userId: string,
     currency: string,
   ): Promise<UserAssetsTotalValue> {
-    this.logger.log(`Calculating total user assets value`, WalletService.name, { userId, currency });
+    this.logger.log(`Calculating total user assets value`, WalletService.name, {
+      userId,
+      currency,
+    });
 
     // Retrieve all wallet IDs for the user
     const allUserWallets = await this.getAllUserWallets();
@@ -271,7 +307,11 @@ export class WalletService {
       totalValue += walletDetail.totalValue;
     }
 
-    this.logger.log(`Total user assets value calculated`, WalletService.name, { userId, currency, totalValue });
+    this.logger.log(`Total user assets value calculated`, WalletService.name, {
+      userId,
+      currency,
+      totalValue,
+    });
 
     return { wallets: walletDetails, totalValue, currency };
   }
@@ -330,7 +370,10 @@ export class WalletService {
     currency: string,
   ): Promise<Record<string, number>> {
     const assetIds = Object.keys(wallet.cryptoAssets);
-    const ratesResponse = await this.rateService.getAssetRates(assetIds, currency);
+    const ratesResponse = await this.rateService.getAssetRates(
+      assetIds,
+      currency,
+    );
 
     return ratesResponse.reduce(
       (acc, rate) => {

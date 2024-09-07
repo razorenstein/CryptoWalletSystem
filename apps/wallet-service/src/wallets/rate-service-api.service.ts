@@ -12,10 +12,7 @@ export class RateService {
     private readonly logger: WalletSystemLogger,
   ) {}
 
-  async getAssetRates(
-    assetIds: string[],
-    currency: string,
-  ): Promise<Rate[]> {
+  async getAssetRates(assetIds: string[], currency: string): Promise<Rate[]> {
     const url = `${config.api.ratesApiBaseUrl}api/v1/rates`;
 
     try {

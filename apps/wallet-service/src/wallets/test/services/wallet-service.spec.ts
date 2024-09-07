@@ -111,8 +111,8 @@ describe('WalletService', () => {
     it('should rebalance wallet assets based on target percentages', async () => {
       const totalValue = 70000; // Total wallet value
       fileManagementService.readFromFile
-        .mockResolvedValueOnce({ user1: ['wallet1'] })  // User owns wallet1
-        .mockResolvedValueOnce({ wallet1: mockWallet });  // Wallet data
+        .mockResolvedValueOnce({ user1: ['wallet1'] }) // User owns wallet1
+        .mockResolvedValueOnce({ wallet1: mockWallet }); // Wallet data
       rateService.getAssetRates.mockResolvedValue(mockRatesResponse);
 
       walletService.calculateTotalValue = jest.fn().mockResolvedValue({
@@ -150,10 +150,14 @@ describe('WalletService', () => {
       const newAssetDto: AddAssetDto = { assetId: 'litecoin', amount: 10 };
 
       fileManagementService.readFromFile
-        .mockResolvedValueOnce({ user1: ['wallet1'] })  // Ensure user owns the wallet
-        .mockResolvedValueOnce({ wallet1: mockWallet });  // Existing wallet data
-      
-      const result = await walletService.addAsset('user1', 'wallet1', newAssetDto);
+        .mockResolvedValueOnce({ user1: ['wallet1'] }) // Ensure user owns the wallet
+        .mockResolvedValueOnce({ wallet1: mockWallet }); // Existing wallet data
+
+      const result = await walletService.addAsset(
+        'user1',
+        'wallet1',
+        newAssetDto,
+      );
 
       expect(result.cryptoAssets['litecoin']).toBe(10); // Check that litecoin was added
       expect(fileManagementService.saveToFile).toHaveBeenCalled();
@@ -163,10 +167,14 @@ describe('WalletService', () => {
       const existingAssetDto: AddAssetDto = { assetId: 'bitcoin', amount: 3 };
 
       fileManagementService.readFromFile
-        .mockResolvedValueOnce({ user1: ['wallet1'] })  // Ensure user owns the wallet
-        .mockResolvedValueOnce({ wallet1: mockWallet });  // Existing wallet data
+        .mockResolvedValueOnce({ user1: ['wallet1'] }) // Ensure user owns the wallet
+        .mockResolvedValueOnce({ wallet1: mockWallet }); // Existing wallet data
 
-      const result = await walletService.addAsset('user1', 'wallet1', existingAssetDto);
+      const result = await walletService.addAsset(
+        'user1',
+        'wallet1',
+        existingAssetDto,
+      );
 
       expect(result.cryptoAssets['bitcoin']).toBe(5); // 2 (existing) + 3 (added)
       expect(fileManagementService.saveToFile).toHaveBeenCalled();
@@ -178,10 +186,14 @@ describe('WalletService', () => {
       const removeAssetDto: RemoveAssetDto = { assetId: 'bitcoin', amount: 5 };
 
       fileManagementService.readFromFile
-        .mockResolvedValueOnce({ user1: ['wallet1'] })  // Ensure user owns the wallet
-        .mockResolvedValueOnce({ wallet1: mockWallet });  // Existing wallet data
+        .mockResolvedValueOnce({ user1: ['wallet1'] }) // Ensure user owns the wallet
+        .mockResolvedValueOnce({ wallet1: mockWallet }); // Existing wallet data
 
-      const result = await walletService.removeAsset('user1', 'wallet1', removeAssetDto);
+      const result = await walletService.removeAsset(
+        'user1',
+        'wallet1',
+        removeAssetDto,
+      );
 
       expect(result.cryptoAssets['bitcoin']).toBeUndefined(); // bitcoin should be removed
       expect(fileManagementService.saveToFile).toHaveBeenCalled();
@@ -191,10 +203,14 @@ describe('WalletService', () => {
       const removeAssetDto: RemoveAssetDto = { assetId: 'ethereum', amount: 2 };
 
       fileManagementService.readFromFile
-        .mockResolvedValueOnce({ user1: ['wallet1'] })  // Ensure user owns the wallet
-        .mockResolvedValueOnce({ wallet1: mockWallet });  // Existing wallet data
+        .mockResolvedValueOnce({ user1: ['wallet1'] }) // Ensure user owns the wallet
+        .mockResolvedValueOnce({ wallet1: mockWallet }); // Existing wallet data
 
-      const result = await walletService.removeAsset('user1', 'wallet1', removeAssetDto);
+      const result = await walletService.removeAsset(
+        'user1',
+        'wallet1',
+        removeAssetDto,
+      );
 
       expect(result.cryptoAssets['ethereum']).toBe(3); // 5 (existing) - 2 (removed)
       expect(fileManagementService.saveToFile).toHaveBeenCalled();

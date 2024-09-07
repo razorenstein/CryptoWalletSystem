@@ -1,4 +1,4 @@
-import { IsAssetIdSupported } from '@shared/utils/validation'; 
+import { IsAssetIdSupported } from '@shared/utils/validation';
 import { IsString, IsNotEmpty, IsNumber, Min } from 'class-validator';
 
 export class RemoveAssetDto {

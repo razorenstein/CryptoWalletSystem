@@ -6,7 +6,11 @@ import {
 import { HttpUtil } from './http-util';
 
 @Module({
-  providers: [UserIdValidationMiddleware, IsAssetIdSupportedConstraint, HttpUtil],
+  providers: [
+    UserIdValidationMiddleware,
+    IsAssetIdSupportedConstraint,
+    HttpUtil,
+  ],
   exports: [UserIdValidationMiddleware, IsAssetIdSupportedConstraint, HttpUtil],
 })
 export class UtilsModule {}

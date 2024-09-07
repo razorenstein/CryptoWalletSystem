@@ -6,5 +6,4 @@ import { SupportedValuesController } from './supported-values.controller';
   controllers: [SupportedValuesController],
   providers: [SupportedValuesService],
 })
-
 export class SupportedValuesModule {}
