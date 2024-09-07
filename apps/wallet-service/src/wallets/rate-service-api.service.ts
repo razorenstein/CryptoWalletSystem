@@ -1,6 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { WalletSystemLogger } from '@shared/logging';
-import config from '../config/config';
+import config from '../config/wallet-service.config';
 import { Rate } from '@shared/models';
 import { HttpService } from '@nestjs/axios';
 import { HttpUtil } from '@shared/utils/http-util'; // Import the util

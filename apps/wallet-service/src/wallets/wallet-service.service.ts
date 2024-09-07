@@ -1,7 +1,7 @@
 import { AssetNotFoundException, InsufficientAssetAmountException, MaxWalletsExceededException, UnauthorizedWalletAccessException, WalletNotFoundException } from "@shared/exceptions";
 import { Wallet } from "@shared/models";
 import { AddAssetDto } from "./dtos/add-asset-request.dto";
-import config from "../config/config";
+import config from "../config/wallet-service.config";
 import { WalletSystemLogger } from "@shared/logging";
 import { FileManagementService } from "@shared/file-management";
 import { RateService } from "./rate-service-api.service";

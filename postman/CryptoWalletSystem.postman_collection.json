@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "b00e7c44-1f5d-4e84-895b-9350ff1ce062",
-		"name": "CryptoWalletSystem API",
+		"_postman_id": "144a5722-3a18-4729-a0ee-c34d7425a0ed",
+		"name": "CryptoWalletSystem",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "38037948"
 	},
@@ -216,12 +216,7 @@
 								}
 							},
 							"response": []
-						}
-					]
-				},
-				{
-					"name": "Assets",
-					"item": [
+						},
 						{
 							"name": "Add Asset to Wallet",
 							"request": {

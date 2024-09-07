@@ -1,5 +1,5 @@
-import { RateApiService } from '../../src/rates/services/rate-api.service';
-import { RateCacheService } from '../../src/rates/services/rate-cache.service';
+import { RateApiService } from '../../rate-api.service';
+import { RateCacheService } from '../../rate-cache.service';
 import { mockCachedRates, mockFetchedRates } from '../mocks/mock-rates';
 import { createTestModule } from '../test-setup';
 

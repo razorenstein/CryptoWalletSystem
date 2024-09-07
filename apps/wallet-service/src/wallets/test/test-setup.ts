@@ -1,8 +1,8 @@
 import { TestingModule, Test } from '@nestjs/testing';
-import { WalletService } from '../src/wallets/wallet-service.service';
 import { FileManagementService } from '@shared/file-management';
-import { RateService } from '../src/wallets/rate-service-api.service';
 import { WalletSystemLogger } from '@shared/logging';
+import { WalletService } from '../wallet-service.service';
+import { RateService } from '../rate-service-api.service';
 
 export async function createTestModule() {
   const module: TestingModule = await Test.createTestingModule({
