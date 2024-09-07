@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RateCacheService } from '../src/services/rate-cache.service';
-import { RateApiService } from '../src/services/rate-api.service';
-import { RateRefreshService } from '../src/services/rate-refresh.service';
-import { RateService } from '../src/services/rate-service.service';
+import { RateCacheService } from '../src/rates/services/rate-cache.service';
+import { RateApiService } from '../src/rates/services/rate-api.service';
+import { RateRefreshService } from '../src/rates/services/rate-refresh.service';
+import { RateService } from '../src/rates/services/rate-service.service';
 
 export async function createTestModule() {
   const module: TestingModule = await Test.createTestingModule({

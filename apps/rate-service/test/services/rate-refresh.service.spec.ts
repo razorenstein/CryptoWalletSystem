@@ -1,6 +1,6 @@
-import { RateApiService } from 'apps/rate-service/src/services/rate-api.service';
+import { RateApiService } from 'apps/rate-service/src/rates/services/rate-api.service';
 import { mockCachedRates, mockFetchedRates } from '../mocks/mock-rates';
-import { RateCacheService } from 'apps/rate-service/src/services/rate-cache.service';
+import { RateCacheService } from 'apps/rate-service/src/rates/services/rate-cache.service';
 import { createTestModule } from '../test-setup';
 
 describe('RateRefreshService', () => {

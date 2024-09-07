@@ -1,7 +1,7 @@
 import { TestingModule, Test } from '@nestjs/testing';
-import { WalletService } from '../src/services/wallet-service.service';
+import { WalletService } from '../src/wallets/wallet-service.service';
 import { FileManagementService } from '@shared/file-management';
-import { RateService } from '../src/services/rate-service-api.service';
+import { RateService } from '../src/wallets/rate-service-api.service';
 import { WalletSystemLogger } from '@shared/logging';
 
 export async function createTestModule() {

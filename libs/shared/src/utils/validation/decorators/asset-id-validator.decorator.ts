@@ -3,9 +3,8 @@ import {
   ValidationOptions,
   ValidatorConstraint,
   ValidatorConstraintInterface,
-  ValidationArguments,
 } from 'class-validator';
-import { validateAssetId } from '@shared/utils';
+import { validateAssetId } from '../validation.utils';
 
 @ValidatorConstraint({ async: false })
 export class IsAssetIdSupportedConstraint

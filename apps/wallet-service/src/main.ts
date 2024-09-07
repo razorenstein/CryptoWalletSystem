@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
-import { WalletServiceModule } from './wallet-service.module';
+import { AppModule } from './app.module';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(WalletServiceModule);
+  const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('api');
   app.enableVersioning({

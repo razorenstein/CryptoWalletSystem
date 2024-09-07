@@ -4,7 +4,7 @@ import { Rate } from '@shared/models';
 import { AxiosResponse } from 'axios';
 import { firstValueFrom } from 'rxjs';
 import { WalletSystemLogger } from '@shared/logging';
-import config from '../config/config';
+import config from '../../config/config';
 import { HttpUtil } from '@shared/utils';
 
 @Injectable()

@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { generateRatesCacheKey } from '../../src/utils/cache-keys.util';
+import { generateRatesCacheKey } from '../../src/rates/utils/cache-keys.util';
 import * as cache from 'memory-cache';
 import { mockRates } from '../mocks/mock-rates';
-import { RateCacheService } from '../../src/services/rate-cache.service';
+import { RateCacheService } from '../../src/rates/services/rate-cache.service';
 import config from '../../src/config/config';
 
 jest.mock('memory-cache', () => ({

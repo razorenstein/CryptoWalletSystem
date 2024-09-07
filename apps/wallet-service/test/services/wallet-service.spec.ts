@@ -6,8 +6,8 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { mockRatesResponse, mockWallet } from '../mocks/mock-data';
 import { createTestModule } from '../test-setup';
-import { AddAssetDto } from 'apps/wallet-service/src/dtos/add-asset-request.dto';
-import { RemoveAssetDto } from 'apps/wallet-service/src/dtos/remove-asset-request.dto';
+import { AddAssetDto } from 'apps/wallet-service/src/wallets/dtos/add-asset-request.dto';
+import { RemoveAssetDto } from 'apps/wallet-service/src/wallets/dtos/remove-asset-request.dto';
 
 jest.mock('uuid', () => ({
   v4: jest.fn(),
