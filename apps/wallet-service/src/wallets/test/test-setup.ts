@@ -1,8 +1,8 @@
 import { TestingModule, Test } from '@nestjs/testing';
 import { FileManagementService } from '@shared/file-management';
 import { WalletSystemLogger } from '@shared/logging';
-import { WalletService } from '../wallet-service.service';
-import { RateService } from '../rate-service-api.service';
+import { WalletService } from '../wallet.service';
+import { RateApiService } from '../rate-api.service';
 
 export async function createTestModule() {
   const module: TestingModule = await Test.createTestingModule({
@@ -17,7 +17,7 @@ export async function createTestModule() {
         },
       },
       {
-        provide: RateService,
+        provide: RateApiService,
         useValue: {
           getAssetRates: jest.fn(),
         },
@@ -37,14 +37,14 @@ export async function createTestModule() {
   const fileManagementService = module.get<FileManagementService>(
     FileManagementService,
   );
-  const rateService = module.get<RateService>(RateService);
+  const rateApiService = module.get<RateApiService>(RateApiService);
   const logger = module.get<WalletSystemLogger>(WalletSystemLogger);
 
   return {
     module,
     walletService,
     fileManagementService,
-    rateService,
+    rateApiService,
     logger,
   };
 }

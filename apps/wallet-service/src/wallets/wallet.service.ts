@@ -10,7 +10,7 @@ import { AddAssetDto } from './dtos/add-asset-request.dto';
 import config from '../config/wallet-service.config';
 import { WalletSystemLogger } from '@shared/logging';
 import { FileManagementService } from '@shared/file-management';
-import { RateService } from './rate-service-api.service';
+import { RateApiService } from './rate-api.service';
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { RemoveAssetDto } from './dtos/remove-asset-request.dto';
@@ -20,7 +20,7 @@ import { UserAssetsTotalValue } from '@shared/models/user-wallets-total-value.mo
 @Injectable()
 export class WalletService {
   constructor(
-    private readonly rateService: RateService,
+    private readonly rateApiService: RateApiService,
     private readonly fileManagementService: FileManagementService,
     private readonly logger: WalletSystemLogger,
   ) {}
@@ -370,7 +370,7 @@ export class WalletService {
     currency: string,
   ): Promise<Record<string, number>> {
     const assetIds = Object.keys(wallet.cryptoAssets);
-    const ratesResponse = await this.rateService.getAssetRates(
+    const ratesResponse = await this.rateApiService.getAssetRates(
       assetIds,
       currency,
     );

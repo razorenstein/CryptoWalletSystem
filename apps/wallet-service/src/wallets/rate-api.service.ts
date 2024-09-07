@@ -6,7 +6,7 @@ import { HttpService } from '@nestjs/axios';
 import { HttpUtil } from '@shared/utils/http-util'; // Import the util
 
 @Injectable()
-export class RateService {
+export class RateApiService {
   constructor(
     private readonly httpService: HttpService,
     private readonly logger: WalletSystemLogger,
@@ -23,7 +23,7 @@ export class RateService {
 
       this.logger.log(
         `Fetched asset rates from rate-service`,
-        RateService.name,
+        RateApiService.name,
         { assetIds, currency },
       );
 
@@ -32,7 +32,7 @@ export class RateService {
       this.logger.error(
         `Failed to fetch asset rates from rate-service`,
         error.stack,
-        RateService.name,
+        RateApiService.name,
         { assetIds, currency },
       );
       throw new HttpException(

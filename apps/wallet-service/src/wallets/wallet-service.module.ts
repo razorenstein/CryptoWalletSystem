@@ -6,14 +6,14 @@ import {
   IsAssetIdSupportedConstraint,
   UserIdValidationMiddleware,
 } from '@shared/utils/validation';
-import { WalletService } from './wallet-service.service';
-import { RateService } from './rate-service-api.service';
+import { WalletService } from './wallet.service';
+import { RateApiService } from './rate-api.service';
 import { WalletServiceController } from './wallet-service.controller';
 
 @Module({
   controllers: [WalletServiceController],
   imports: [HttpModule, LoggingModule, FileManagementModule],
-  providers: [WalletService, RateService, IsAssetIdSupportedConstraint],
+  providers: [WalletService, RateApiService, IsAssetIdSupportedConstraint],
 })
 export class WalletServiceModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

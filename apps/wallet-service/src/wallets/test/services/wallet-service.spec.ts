@@ -16,14 +16,14 @@ jest.mock('uuid', () => ({
 describe('WalletService', () => {
   let walletService;
   let fileManagementService;
-  let rateService;
+  let rateApiService;
 
   beforeEach(async () => {
     const setup = await createTestModule();
 
     walletService = setup.walletService;
     fileManagementService = setup.fileManagementService;
-    rateService = setup.rateService;
+    rateApiService = setup.rateApiService;
     jest.clearAllMocks();
   });
 
@@ -113,7 +113,7 @@ describe('WalletService', () => {
       fileManagementService.readFromFile
         .mockResolvedValueOnce({ user1: ['wallet1'] }) // User owns wallet1
         .mockResolvedValueOnce({ wallet1: mockWallet }); // Wallet data
-      rateService.getAssetRates.mockResolvedValue(mockRatesResponse);
+      rateApiService.getAssetRates.mockResolvedValue(mockRatesResponse);
 
       walletService.calculateTotalValue = jest.fn().mockResolvedValue({
         wallet: mockWallet,

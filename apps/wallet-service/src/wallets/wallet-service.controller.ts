@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { Wallet } from '@shared/models';
 import { validateCurrency } from '@shared/utils';
-import { WalletService } from './wallet-service.service';
+import { WalletService } from './wallet.service';
 import { AddAssetDto } from './dtos/add-asset-request.dto';
 import { RemoveAssetDto } from './dtos/remove-asset-request.dto';
 import { RebalanceWalletDto } from './dtos/rebalance-wallet-dto';
