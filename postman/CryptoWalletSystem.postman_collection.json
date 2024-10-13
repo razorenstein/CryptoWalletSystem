@@ -1,0 +1,364 @@
+{
+	"info": {
+		"_postman_id": "144a5722-3a18-4729-a0ee-c34d7425a0ed",
+		"name": "CryptoWalletSystem",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38037948"
+	},
+	"item": [
+		{
+			"name": "Wallet Service API",
+			"item": [
+				{
+					"name": "Wallet",
+					"item": [
+						{
+							"name": "Create Wallet",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-User-ID",
+										"value": "user123",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/v1/wallets",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"v1",
+										"wallets"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Wallet",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-User-ID",
+										"value": "user123",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:3001/api/v1/wallets/8985c0ec-3aab-4f38-8646-3ad791e0adc8",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"v1",
+										"wallets",
+										"8985c0ec-3aab-4f38-8646-3ad791e0adc8"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Wallet",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "X-User-ID",
+										"value": "user123",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:3001/api/v1/wallets/a3a5ed06-cb0a-4841-8d47-18f85ac9de76",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"v1",
+										"wallets",
+										"a3a5ed06-cb0a-4841-8d47-18f85ac9de76"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Total Wallet Value",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-User-ID",
+										"value": "user123",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:3001/api/v1/wallets/value/8985c0ec-3aab-4f38-8646-3ad791e0adc8?currency=USD",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"v1",
+										"wallets",
+										"value",
+										"8985c0ec-3aab-4f38-8646-3ad791e0adc8"
+									],
+									"query": [
+										{
+											"key": "currency",
+											"value": "USD"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Total User Assets Value",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-User-ID",
+										"value": "user123",
+										"description": "The ID of the user",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:3001/api/v1/wallets/user-assets/value?currency=USD",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"v1",
+										"wallets",
+										"user-assets",
+										"value"
+									],
+									"query": [
+										{
+											"key": "currency",
+											"value": "USD",
+											"description": "The currency in which to calculate the total value"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Rebalance Wallet",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-USER-ID",
+										"value": "user123",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"targetPercentages\": {\n    \"bitcoin\": 70,\n    \"ethereum\": 30\n    // \"oobit\": 20\n  }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/v1/wallets/rebalance/8985c0ec-3aab-4f38-8646-3ad791e0adc8",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"v1",
+										"wallets",
+										"rebalance",
+										"8985c0ec-3aab-4f38-8646-3ad791e0adc8"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Asset to Wallet",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-User-ID",
+										"value": "user123",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"assetId\": \"ethereum\",\n    \"amount\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/v1/wallets/assets/8985c0ec-3aab-4f38-8646-3ad791e0adc8",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"v1",
+										"wallets",
+										"assets",
+										"8985c0ec-3aab-4f38-8646-3ad791e0adc8"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Asset from Wallet",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "X-User-ID",
+										"value": "user123",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"assetId\": \"bitcoin\",\n    \"amount\": 1.0\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/v1/wallets/assets/8985c0ec-3aab-4f38-8646-3ad791e0adc8",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"v1",
+										"wallets",
+										"assets",
+										"8985c0ec-3aab-4f38-8646-3ad791e0adc8"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Supported Values and Asset Operations",
+					"item": [
+						{
+							"name": "Get Supported Currencies",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-User-ID",
+										"value": "user123",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:3001/api/v1/supported-values/currencies",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"v1",
+										"supported-values",
+										"currencies"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Supported Asset IDs",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-User-ID",
+										"value": "user123",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:3001/api/v1/supported-values/asset-ids",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"v1",
+										"supported-values",
+										"asset-ids"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}

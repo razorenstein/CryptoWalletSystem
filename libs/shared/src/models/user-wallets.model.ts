@@ -1,4 +1,4 @@
 export interface UserWallets {
-    userId: string;
-    walletIds: string[];
-  }
+  userId: string;
+  walletIds: string[];
+}

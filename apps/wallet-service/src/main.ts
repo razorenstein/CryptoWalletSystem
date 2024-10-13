@@ -1,16 +1,16 @@
 import { NestFactory } from '@nestjs/core';
-import { WalletServiceModule } from './wallet-service.module';
+import { AppModule } from './app.module';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(WalletServiceModule);
+  const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('api');
   app.enableVersioning({
-    type: VersioningType.URI, 
-  });  
+    type: VersioningType.URI,
+  });
 
-  app.useGlobalPipes(new ValidationPipe()); 
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(3001);
 }
 bootstrap();
